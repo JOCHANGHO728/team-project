@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Login">
+
+    <android.widget.Button
+        android:id="@+id/blue_button"
+        android:layout_width="match_parent"
+        android:layout_height="75sp"
+        android:background="#6090ED"
+        android:text="로그인 화면"
+        app:layout_constraintBaseline_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/innerLayout"
+        android:layout_width="375sp"
+        android:layout_height="450sp"
+        android:padding="16dp"
+        android:background="@drawable/border_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/blue_button"
+        android:layout_marginTop="24dp"
+        >
+
+        <EditText
+            android:id="@+id/loginID"
+            android:layout_width="350sp"
+            android:layout_height="50sp"
+            android:text="아이디를 입력하세요"
+            app:layout_constraintBaseline_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="350sp"
+            android:layout_height="50sp"
+            android:text="비밀번호를 입력하세요"
+            app:layout_constraintTop_toBottomOf="@id/loginID"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <android.widget.Button
+            android:id="@+id/login"
+            android:layout_width="250sp"
+            android:layout_height="75sp"
+            android:background="@drawable/button_backgroud"
+            android:text="로그인"
+            app:layout_constraintTop_toBottomOf="@id/password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            />
+
+        <android.widget.Button
+            android:id="@+id/signup"
+            android:layout_width="250sp"
+            android:layout_height="75sp"
+            android:background="@drawable/button_backgroud"
+            android:text="회원 가입"
+            app:layout_constraintTop_toBottomOf="@id/login"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            />
+
+        <android.widget.Button
+            android:id="@+id/out"
+            android:layout_width="250sp"
+            android:layout_height="75sp"
+            android:background="@drawable/button_backgroud"
+            android:text="메인 화면으로 돌아가기"
+            app:layout_constraintTop_toBottomOf="@id/signup"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <android.widget.Button
+        android:layout_width="match_parent"
+        android:layout_height="75sp"
+        android:background="#6090ED"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#80DEEA"
+    tools:context=".MainActivity">
+
+    <android.widget.Button
+        android:id="@+id/blue_button"
+        android:layout_width="match_parent"
+        android:layout_height="75sp"
+        android:background="#6090ED"
+        android:text="관리자용 앱"
+        app:layout_constraintBaseline_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <android.widget.Button
+        android:id="@+id/login"
+        android:layout_width="200sp"
+        android:layout_height="wrap_content"
+        android:text="로그인 및 회원가입"
+        android:background="@drawable/button_backgroud"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@id/blue_button2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <android.widget.Button
+        android:id="@+id/blue_button2"
+        android:layout_width="match_parent"
+        android:layout_height="75sp"
+        android:background="#6090ED"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
