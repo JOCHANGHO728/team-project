@@ -7,4 +7,149 @@
     android:layout_height="match_parent"
     tools:context=".management.Change">
 
+    <android.widget.Button
+        android:id="@+id/blue_button"
+        android:layout_width="match_parent"
+        android:layout_height="75sp"
+        android:background="#6090ED"
+        android:text="상품 데이터베이스 수정"
+        android:textSize="20sp"
+        app:layout_constraintBaseline_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/innerLayout"
+        android:layout_width="375sp"
+        android:layout_height="525sp"
+        android:padding="16dp"
+        android:background="@drawable/border_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/blue_button"
+        android:layout_marginTop="24dp"
+        >
+
+        <TextView
+            android:id="@+id/idtext"
+            android:layout_width="wrap_content"
+            android:layout_height="20sp"
+            android:text="검색하고 싶은 상품"
+            android:textSize="15sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            >
+        </TextView>
+
+        <EditText
+            android:id="@+id/productID"
+            android:layout_width="350sp"
+            android:layout_height="50sp"
+            app:layout_constraintTop_toBottomOf="@+id/idtext"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/resultText"
+            android:layout_width="wrap_content"
+            android:layout_height="20sp"
+            android:text="조회 결과"
+            app:layout_constraintTop_toBottomOf="@+id/productID"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/result"
+            android:layout_width="350sp"
+            android:layout_height="50sp"
+            app:layout_constraintTop_toBottomOf="@id/resultText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/amountText"
+            android:layout_width="wrap_content"
+            android:layout_height="20sp"
+            android:text="현재 수량"
+            app:layout_constraintTop_toBottomOf="@+id/result"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/amount"
+            android:layout_width="350sp"
+            android:layout_height="50sp"
+            app:layout_constraintTop_toBottomOf="@id/amountText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/changeText"
+            android:layout_width="wrap_content"
+            android:layout_height="20sp"
+            android:text="변경할 수량 입력"
+            app:layout_constraintTop_toBottomOf="@+id/amount"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <EditText
+            android:id="@+id/changeAmount"
+            android:layout_width="350sp"
+            android:layout_height="50sp"
+            app:layout_constraintTop_toBottomOf="@id/changeText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <android.widget.Button
+            android:id="@+id/search"
+            android:layout_width="250sp"
+            android:layout_height="75sp"
+            android:background="@drawable/button_backgroud"
+            android:text="상품 검색"
+            app:layout_constraintTop_toBottomOf="@id/changeAmount"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            />
+
+        <android.widget.Button
+            android:id="@+id/change"
+            android:layout_width="250sp"
+            android:layout_height="75sp"
+            android:background="@drawable/button_backgroud"
+            android:text="수량 변경"
+            app:layout_constraintTop_toBottomOf="@id/search"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <android.widget.Button
+        android:layout_width="match_parent"
+        android:layout_height="75sp"
+        android:background="#6090ED"
+        android:elevation="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.widget.Button
+        android:id="@+id/out"
+        android:layout_width="250sp"
+        android:layout_height="50sp"
+        android:background="@drawable/button_background2"
+        android:text="관리 화면으로 돌아가기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="10dp"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
