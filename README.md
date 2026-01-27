@@ -40,3 +40,112 @@ SocketTimeoutException: 서버가 깨어나는 중이라 응답이 늦어서 그
 
 404 Not Found: 요청한 주소(URI)가 맞는지 확인해 주세요. (Controller에 그 주소가 있는지)
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+📂 [Android] 서버 연동 코드 가이드 (Java + Retrofit2)
+안드로이드 앱은 DB에 직접 접속하지 않고, Retrofit이라는 라이브러리를 통해 서버(Spring Boot)와 대화합니다.
+
+1️⃣ build.gradle (Module 수준) 설정
+먼저 라이브러리를 추가해야 합니다.
+
+Gradle
+dependencies {
+    // Retrofit2 (서버 통신 라이브러리)
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0' // JSON 변환기
+}
+2️⃣ 데이터 모델 클래스 (DTO) 만들기
+서버에서 보내주는 JSON 데이터와 똑같이 생긴 자바 클래스를 만듭니다. (예시: 서버가 User 정보를 줄 때)
+
+Java
+public class UserDto {
+    // 서버의 변수명과 똑같아야 함!
+    // @SerializedName("user_id") // 만약 서버 변수명과 다르게 쓰고 싶다면 이 어노테이션 사용
+    private Long id;
+    private String username;
+    private String email;
+
+    // Getter, Setter, Constructor 필요 (Alt+Insert로 생성)
+    public String getUsername() { return username; }
+}
+3️⃣ API 인터페이스 정의 (ApiService.java)
+어떤 요청을 보낼지 메뉴판을 만드는 곳입니다.
+
+Java
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Body;
+import java.util.List;
+
+public interface ApiService {
+
+    // 1. GET 요청 예시 (데이터 가져오기)
+    // 괄호 안에는 서버 Controller의 @GetMapping("/api/users") 주소를 적음
+    @GET("/api/users")
+    Call<List<UserDto>> getAllUsers();
+
+    // 2. POST 요청 예시 (데이터 보내기/로그인 등)
+    // @Body는 내가 보낼 데이터를 의미함
+    @POST("/api/login")
+    Call<String> login(@Body UserDto user);
+}
+4️⃣ Retrofit 클라이언트 설정 (RetrofitClient.java)
+서버 주소를 설정하고 연결을 관리하는 클래스입니다. (복사해서 그대로 쓰면 됩니다.)
+
+Java
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class RetrofitClient {
+    // ★ 팀장님(서버)이 준 Render 주소를 여기에 적으세요! (마지막 / 꼭 붙이기)
+    private static final String BASE_URL = "https://[팀장님_프로젝트_이름].onrender.com/"; 
+    
+    private static Retrofit retrofit = null;
+
+    public static ApiService getApiService() {
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create()) // JSON을 자바로 자동 변환
+                    .build();
+        }
+        return retrofit.create(ApiService.class);
+    }
+}
+5️⃣ 실제 사용하기 (MainActivity.java 등)
+이제 버튼을 눌렀을 때 데이터를 가져오는 코드입니다.
+
+Java
+// 버튼 클릭 이벤트 안에서...
+RetrofitClient.getApiService().getAllUsers().enqueue(new Callback<List<UserDto>>() {
+    @Override
+    public void onResponse(Call<List<UserDto>> call, Response<List<UserDto>> response) {
+        if (response.isSuccessful()) {
+            // 성공! 데이터를 가져옴
+            List<UserDto> users = response.body();
+            
+            // 예: 첫 번째 유저 이름 출력
+            if (users != null && !users.isEmpty()) {
+                System.out.println("성공: " + users.get(0).getUsername());
+            }
+        } else {
+            // 서버에는 갔으나 오류 발생 (404, 500 등)
+            System.out.println("실패 코드: " + response.code());
+        }
+    }
+
+    @Override
+    public void onFailure(Call<List<UserDto>> call, Throwable t) {
+        // 통신 자체가 실패 (인터넷 끊김, 서버 꺼짐 등)
+        t.printStackTrace(); 
+        System.out.println("통신 에러: " + t.getMessage());
+    }
+});
+💡 팀원에게 주는 팁
+"DTO(2번)는 내가 만든 DB 테이블 컬럼명이랑 똑같이 맞춰줘!" 라고 말해주세요.
+
+"Base URL(4번) 꼭 https로 시작해야 해!" 라고 강조해주세요.
+
+앱이 인터넷을 써야 하니까 AndroidManifest.xml에 인터넷 권한(INTERNET)이 꼭 있어야 합니다.
