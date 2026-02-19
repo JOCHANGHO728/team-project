@@ -54,3 +54,50 @@ public class OrderRepository {
                 rs.getBigDecimal("item_total_price"),
                 rs.getBigDecimal("total_amount")
         ));
+    }
+
+    // 2. 장바구니 상품 결제
+    @Transactional
+    public void createOrder(OrderRequestDto request) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        String priceSql = "SELECT p_price FROM productdb WHERE p_id = ?";
+        
+        for (CartItemDto item : request.getCartItems()) {
+            BigDecimal price = jdbcTemplate.queryForObject(priceSql, BigDecimal.class, item.getProductId());
+            if (price != null) {
+                totalAmount = totalAmount.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
+            }
+        }
+
+        String orderSql = "INSERT INTO orders (customer_id, order_date, total_amount) VALUES (?, NOW(), ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        
+        final BigDecimal finalTotalAmount = totalAmount; 
+        
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(orderSql, Statement.RETURN_GENERATED_KEYS);
+            ps.setLong(1, request.getCustomerId());
+            ps.setBigDecimal(2, finalTotalAmount);
+            return ps;
+        }, keyHolder);
+
+        Long newOrderId = keyHolder.getKey().longValue();
+
+        String detailSql = "INSERT INTO order_detail (order_id, product_id, quantity) VALUES (?, ?, ?)";
+        
+        jdbcTemplate.batchUpdate(detailSql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                CartItemDto item = request.getCartItems().get(i);
+                ps.setLong(1, newOrderId);          
+                ps.setLong(2, item.getProductId()); 
+                ps.setInt(3, item.getQuantity());   
+            }
+
+            @Override
+            public int getBatchSize() {
+                return request.getCartItems().size();
+            }
+        });
+    }
+}
