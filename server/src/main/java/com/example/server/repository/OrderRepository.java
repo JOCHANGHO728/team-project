@@ -1,54 +1,56 @@
+package com.example.server.repository;
+
+import com.example.server.dto.CartItemDto;
+import com.example.server.dto.OrderHistoryDto;
+import com.example.server.dto.OrderRequestDto;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
-// ... 기존 코드 ...
+@Repository
+public class OrderRepository {
 
-// 장바구니 상품 결제 (트랜잭션 적용 필수!)
-@Transactional
-public void createOrder(OrderRequestDto request) {
-    // 1. DB에서 직접 상품 가격을 조회하여 총 결제 금액(total_amount) 안전하게 계산
-    BigDecimal totalAmount = BigDecimal.ZERO;
-    String priceSql = "SELECT p_price FROM productdb WHERE p_id = ?";
+    private final JdbcTemplate jdbcTemplate;
 
-    for (CartItemDto item : request.getCartItems()) {
-        BigDecimal price = jdbcTemplate.queryForObject(priceSql, BigDecimal.class, item.getProductId());
-        totalAmount = totalAmount.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
+    public OrderRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    // 2. orders 테이블에 주문 내역 저장 후, 자동 생성된 order_id 가져오기
-    String orderSql = "INSERT INTO orders (customer_id, order_date, total_amount) VALUES (?, NOW(), ?)";
-    KeyHolder keyHolder = new GeneratedKeyHolder();
+    // 1. 주문 내역 전체 조회
+    public List<OrderHistoryDto> getOrderHistory() {
+        String sql = """
+            SELECT 
+                o.order_id,
+                u.name AS customer_name,
+                o.order_date,
+                p.p_name,
+                od.quantity,
+                p.p_price,
+                (p.p_price * od.quantity) AS item_total_price,
+                o.total_amount
+            FROM orders o
+            JOIN userdb u ON o.customer_id = u.id
+            JOIN order_detail od ON o.order_id = od.order_id
+            JOIN productdb p ON od.product_id = p.p_id
+            ORDER BY o.order_date DESC, o.order_id ASC
+        """;
 
-    jdbcTemplate.update(connection -> {
-        PreparedStatement ps = connection.prepareStatement(orderSql, Statement.RETURN_GENERATED_KEYS);
-        ps.setLong(1, request.getCustomerId());
-        ps.setBigDecimal(2, totalAmount);
-        return ps;
-    }, keyHolder);
-
-    Long newOrderId = keyHolder.getKey().longValue();
-
-    // 3. 추출한 order_id를 사용하여 order_detail 테이블에 장바구니 상품들 일괄(Batch) 저장
-    String detailSql = "INSERT INTO order_detail (order_id, product_id, quantity) VALUES (?, ?, ?)";
-
-    jdbcTemplate.batchUpdate(detailSql, new BatchPreparedStatementSetter() {
-        @Override
-        public void setValues(PreparedStatement ps, int i) throws SQLException {
-            CartItemDto item = request.getCartItems().get(i);
-            ps.setLong(1, newOrderId);          // 방금 생성된 주문 번호
-            ps.setLong(2, item.getProductId()); // 상품 번호
-            ps.setInt(3, item.getQuantity());   // 수량
-        }
-
-        @Override
-        public int getBatchSize() {
-            return request.getCartItems().size();
-        }
-    });
-}
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new OrderHistoryDto(
+                rs.getLong("order_id"),
+                rs.getString("customer_name"),
+                rs.getTimestamp("order_date").toLocalDateTime(),
+                rs.getString("p_name"),
+                rs.getInt("quantity"),
+                rs.getBigDecimal("p_price"),
+                rs.getBigDecimal("item_total_price"),
+                rs.getBigDecimal("total_amount")
+        ));
