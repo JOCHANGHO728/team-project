@@ -1,3 +1,6 @@
+package com.example.server.repository;  // 패키지 선언
+import com.example.server.dto.UserDto;  // 이게 있어야 함
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
