@@ -10,8 +10,8 @@ COPY . .
 # 4. gradlew 실행 권한을 줍니다.
 RUN chmod +x ./gradlew
 
-# 5. 빌드합니다. (app.jar 파일 생성)
+# 5. 빌드합니다.
 RUN ./gradlew bootJar
 
-# 6. 서버가 실행될 때 이 명령어를 씁니다.
-ENTRYPOINT ["java", "-jar", "build/libs/app.jar"]
+# 6. 서버가 실행될 때 이 명령어를 씁니다. (수정된 부분)
+ENTRYPOINT ["sh", "-c", "java -jar build/libs/*.jar"]
