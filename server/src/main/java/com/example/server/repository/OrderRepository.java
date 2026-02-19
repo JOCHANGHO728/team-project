@@ -38,7 +38,7 @@ public class OrderRepository {
                 (p.p_price * od.quantity) AS item_total_price,
                 o.total_amount
             FROM orders o
-            JOIN userdb u ON o.customer_id = u.id
+            JOIN usersdb u ON o.customer_id = u.id  /* ← 여기를 usersdb로 수정했습니다! */
             JOIN order_detail od ON o.order_id = od.order_id
             JOIN productdb p ON od.product_id = p.p_id
             ORDER BY o.order_date DESC, o.order_id ASC
