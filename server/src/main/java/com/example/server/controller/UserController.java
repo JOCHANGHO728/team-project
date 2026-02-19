@@ -1,3 +1,7 @@
+package com.example.server.controller;  // ← 1. 패키지 선언 추가
+import com.example.server.dto.UserDto;  // ← 2. UserDto import 추가
+import com.example.server.repository.UserRepository;  // ← 이것도 추가 필요
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
