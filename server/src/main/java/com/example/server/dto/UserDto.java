@@ -1,3 +1,5 @@
+package com.example.server.dto; // 이 줄이 가장 중요합니다!
+
 public class UserDto {
     private String loginId;
     private String password;
