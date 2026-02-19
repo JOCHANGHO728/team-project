@@ -1,8 +1,9 @@
+package com.example.server.dto;
+
 public class CartItemDto {
     private Long productId;
     private Integer quantity;
 
-    // Getter & Setter
     public Long getProductId() { return productId; }
     public void setProductId(Long productId) { this.productId = productId; }
     public Integer getQuantity() { return quantity; }
