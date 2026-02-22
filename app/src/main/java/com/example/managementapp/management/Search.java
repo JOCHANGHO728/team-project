@@ -1,9 +1,11 @@
 package com.example.managementapp.management;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -23,24 +25,45 @@ public class Search extends AppCompatActivity {
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        ProductDB Products = new ProductDB(this);
-        SQLiteDatabase db = Products.getReadableDatabase();
+        // 상품조회 기능
+        binding.search.setOnClickListener(v -> {
+            //내부 데이터베이스 객체 생성
+            ProductDB Products = new ProductDB(this);
+            SQLiteDatabase db = Products.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM products", null);
+            String id = binding.productID.getText().toString();
+            Cursor cursor = db.rawQuery("SELECT * FROM products WHERE name = ?", new String[]{id});
 
-        while (cursor.moveToNext()) {
-            String name = cursor.getString(0);
-            int price = cursor.getInt(1);
-            int quantity = cursor.getInt(2);
-            String bKey = cursor.getString(3);
-            String category = cursor.getString(4);
+            if (cursor != null && cursor.moveToFirst()) {
+                // 데이터가 존재하는 경우
+                int price = cursor.getInt(1);
+                int quantity = cursor.getInt(2);
+                String bKey = cursor.getString(3);
+                String category = cursor.getString(4);
 
-            Log.d("DB_TEST", name + " / " +  price + " / " + quantity + " / " + bKey + " / " + category);
-        }
+                binding.price.setText("  " + price);
+                binding.quantity.setText("  " + quantity);
+                binding.bKey.setText("  " + bKey);
+                binding.category.setText("  " + category);
 
-        cursor.close();
-        db.close();
+                Log.d("DB_TEST", id + " / " + price + " / " + quantity + " / " + bKey + " / " + category);
+            } else {
+                // 데이터가 없는 경우 → Toast 메시지 출력
+                Toast.makeText(this, "해당 상품이 존재하지 않습니다.", Toast.LENGTH_LONG).show();
+                Log.d("DB_TEST", "FAIL");
+            }
 
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        });
+
+        // 관리 화면으로 돌아가기
+        binding.out.setOnClickListener(v -> {
+            Intent intent = new Intent(Search.this, Management.class);
+            startActivity(intent);
+        });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
