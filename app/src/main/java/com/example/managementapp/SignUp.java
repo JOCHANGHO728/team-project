@@ -2,8 +2,10 @@ package com.example.managementapp;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +41,21 @@ public class SignUp extends AppCompatActivity {
         setContentView(binding.getRoot());
         dbHelper = new MyDBHelper(this);
 
+        // 디버그용 코드
+        SQLiteDatabase test = dbHelper.getReadableDatabase();
+        Cursor cursor = test.rawQuery("SELECT * FROM members", null);
+
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndexOrThrow("id"));
+            int password = cursor.getInt(cursor.getColumnIndexOrThrow("password"));
+            String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+            int number = cursor.getInt(cursor.getColumnIndexOrThrow("number"));
+
+            Log.d("DB_RESULT", "ID: " + id + ", "+ "password: " + password + ", " + "Name: " + name + ", PhoneNumber: " + number);
+        }
+
+        cursor.close();
+        test.close();
 
         // 회원가입 기능
         // 외부 db와 연동 필요함
@@ -64,8 +81,10 @@ public class SignUp extends AppCompatActivity {
                 Toast.makeText(this, "저장 실패", Toast.LENGTH_SHORT).show();
             }
 
+            
+
             // 서버에 retrofit 객체 전달
-            api.register(request).enqueue(new retrofit2.Callback<SignUpResponse>() {
+            /*api.register(request).enqueue(new retrofit2.Callback<SignUpResponse>() {
                 @Override
                 public void onResponse(Call<SignUpResponse> call, retrofit2.Response<SignUpResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -82,8 +101,7 @@ public class SignUp extends AppCompatActivity {
                 public void onFailure(Call<SignUpResponse> call, Throwable t) {
                     Toast.makeText(SignUp.this, "서버 연결 실패", Toast.LENGTH_SHORT).show();
                 }
-            });
-
+            });*/
         });
 
         // 메인화면으로 이동
