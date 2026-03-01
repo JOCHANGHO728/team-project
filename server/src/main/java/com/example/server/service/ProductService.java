@@ -16,17 +16,14 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    // 전체 상품 조회
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    // 상품 이름 검색 메서드
     public List<Product> searchProductsByName(String keyword) {
-        return productRepository.findByPNameContaining(keyword);
+        return productRepository.searchByName(keyword);
     }
 
-    // 상품 추가
     @Transactional
     public void createProduct(ProductCreateDto request) {
         Product product = new Product();
@@ -39,7 +36,6 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    // 상품 수정
     @Transactional
     public void updateProduct(Long pId, ProductUpdateDto request) {
         Product product = productRepository.findById(pId)
@@ -49,7 +45,6 @@ public class ProductService {
         product.setPQuantity(request.getPQuantity());
     }
 
-    // 상품 삭제
     @Transactional
     public void deleteProduct(Long pId) {
         Product product = productRepository.findById(pId)
