@@ -263,6 +263,56 @@ public class ManagerActivity extends AppCompatActivity {
 
 ---
 
-이 내용을 그대로 복사하셔서 전달해 주시면 됩니다.
+### 2. 안드로이드 팀원 전달용 코드 (Java) ( 제품 검색하기 )
 
-혹시 고객용(userdb) 회원가입, 로그인 및 가계부(orders) 조회를 위한 API 백엔드 코드와 안드로이드 자바 가이드도 이어서 작성해 드릴까요?
+팀원분은 Retrofit 인터페이스에 검색용 API를 하나 더 추가하고 호출만 하면 됩니다.
+
+**① `ManagerApi.java` (API 인터페이스 추가)**
+URL 뒤에 `?name=키워드` 형태로 데이터를 붙여서 보내야 하므로 `@Query` 어노테이션을 사용합니다.
+
+```java
+    // ... (기존 코드들) ...
+
+    // 6. 상품 이름 검색 API
+    @GET("/api/v1/managers/products/search")
+    Call<List<ProductResponse>> searchProducts(@Query("name") String keyword);
+}
+
+```
+
+**② `ManagerActivity.java` (검색 호출 예시)**
+앱에서 검색창(EditText)에 글자를 입력하고 돋보기 버튼을 눌렀을 때 실행될 코드입니다.
+
+```java
+        // ==========================================
+        // 6. 상품 이름 검색 실행 예시 (예: "새우" 검색)
+        // ==========================================
+        String searchKeyword = "새우"; 
+        
+        managerApi.searchProducts(searchKeyword).enqueue(new Callback<List<ProductResponse>>() {
+            @Override
+            public void onResponse(Call<List<ProductResponse>> call, Response<List<ProductResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<ProductResponse> searchResult = response.body();
+                    Log.d("API_SUCCESS", "검색된 상품 개수: " + searchResult.size());
+                    
+                    // 검색된 상품들의 이름 출력해보기
+                    for (ProductResponse product : searchResult) {
+                        Log.d("API_SUCCESS", "검색된 상품: " + product.getPName());
+                    }
+                    
+                    // TODO: 이 검색 결과를 화면(RecyclerView)에 업데이트 해주세요!
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ProductResponse>> call, Throwable t) {
+                Log.e("API_FAIL", "상품 검색 통신 실패: " + t.getMessage());
+            }
+        });
+
+```
+
+---
+
+
