@@ -49,4 +49,10 @@ public class ManagerApiController {
         productService.deleteProduct(pId);
         return ResponseEntity.ok().body("상품 삭제 완료");
     }
+
+    @GetMapping("/products/search")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam("name") String keyword) {
+        List<Product> products = productService.searchProductsByName(keyword);
+        return ResponseEntity.ok().body(products);
+    }
 }
