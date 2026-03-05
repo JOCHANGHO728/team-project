@@ -1,9 +1,14 @@
 package com.example.managementapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -12,13 +17,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.example.managementapp.databinding.ActivityLoginBinding;
+import com.example.managementapp.management.Management;
 import com.example.managementapp.model.ApiService;
 import com.example.managementapp.model.LoginRequest;
+import com.example.managementapp.model.LoginResponse;
 
 public class Login extends AppCompatActivity {
     private ActivityLoginBinding binding;
     Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("https://yourserver.com/api/") // 서버 주소
+            .baseUrl("https://server-jc54.onrender.com") // 서버 주소
             .addConverterFactory(GsonConverterFactory.create())
             .build();
     ApiService api = retrofit.create(ApiService.class);
@@ -50,13 +57,24 @@ public class Login extends AppCompatActivity {
             String password = binding.password.getText().toString();
             LoginRequest request = new LoginRequest(id, password);
 
-            Intent intent = new Intent(Login.this, com.example.managementapp.management.Management.class);
-            startActivity(intent);
-            /*//내부 데이터베이스 테스트 코드
-            Cursor cursor = db.rawQuery("SELECT * FROM users WHERE id=? AND password=?",
+            //내부 데이터베이스 테스트 코드
+            Cursor cursor = db.rawQuery("SELECT * FROM members WHERE id=? AND password=?",
                     new String[]{id, password});
 
-            if (cursor.moveToFirst()) {
+            if (cursor != null && cursor.moveToFirst()) {
+                // 데이터가 존재하는 경우 (로그인 성공)
+                Toast.makeText(this, "로그인 성공!", Toast.LENGTH_SHORT).show();
+                Log.d("Login result:", "ID: " + id + ", "+ "password: " + password);
+
+                // 예: 다음 화면으로 이동
+                Intent intent = new Intent(this, Management.class);
+                startActivity(intent);
+            } else {
+                // 데이터가 없는 경우 (로그인 실패)
+                Toast.makeText(this, "아이디 또는 비밀번호가 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
+            }
+
+            /*if (cursor.moveToFirst()) {
                 // 로그인 성공 → SharedPreferences에 상태 저장
                 SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
