@@ -69,7 +69,7 @@
             android:layout_width="250sp"
             android:layout_height="75sp"
             android:background="@drawable/button_backgroud"
-            android:text="회원 가입"
+            android:text="회원 가입(미사용)"
             app:layout_constraintTop_toBottomOf="@id/login"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
