@@ -13,16 +13,17 @@ public class User {
     private Long id;
 
     @Column(name = "login_id", unique = true, nullable = false)
-    private String userId;
+    private String loginId;
 
     @Column(name = "password", nullable = false)
-    private String uPassword;
+    private String password;
 
-    @Column(name = "name")
-    private String uName;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "p_number")
-    private String uphonenumber;
+    private String p_number;
 
 }
+
 
