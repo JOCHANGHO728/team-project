@@ -14,15 +14,17 @@ public class UserService {
 
     public String login(UserLoginDto request) {
 
-        User user = userRepository.findByUserId(request.getUserId())
+
+
+        User user = userRepository.findByLoginId(request.getLogin_id())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고객 아이디입니다."));
 
 
-        if (!user.getUPassword().equals(request.getUPassword())) {
+        if (!user.getPassword().equals(request.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
 
-        return user.getUName() + "님, 환영합니다!";
+        return user.getName() + "님, 환영합니다!";
     }
 }
