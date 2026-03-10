@@ -13,16 +13,16 @@ public class User {
     private Long id;
 
     @Column(name = "login_id", unique = true, nullable = false)
-    private String loginId;
+    private String uId; //여기 값 이요해주세요
 
     @Column(name = "password", nullable = false)
-    private String password;
+    private String uPassword;  //여기 값 이요해주세요
 
     @Column(name = "name", nullable = false)
-    private String name;
+    private String uName;  //여기 값 이요해주세요
 
     @Column(name = "p_number")
-    private String p_number;
+    private String uNum;  //여기 값 이요해주세요
 
 }
 
