@@ -6,14 +6,15 @@ import lombok.Setter;
 @Getter @Setter
 public class UserSignupDto {
 
-    private String login_id;
+    private String uId;
 
 
-    private String password;
+    private String uPassword;
 
 
-    private String name;
+    private String uName;
 
 
-    private String p_number;
+    private String uNum;
+
 }
