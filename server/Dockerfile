@@ -11,7 +11,7 @@ COPY . .
 RUN chmod +x ./gradlew
 
 # 5. 빌드합니다.
-RUN ./gradlew bootJar
+RUN ./gradlew bootJar -x test
 
 # 6. 서버가 실행될 때 이 명령어를 씁니다. (수정된 부분)
 ENTRYPOINT ["sh", "-c", "java -jar build/libs/*.jar"]
