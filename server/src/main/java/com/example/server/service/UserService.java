@@ -1,7 +1,7 @@
 package com.example.server.service;
 
 import com.example.server.dto.UserLoginDto;
-import com.example.server.dto.UserSignupDto; // 추가됨
+import com.example.server.dto.UserSignupDto;
 import com.example.server.entity.User;
 import com.example.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-
-
+    //로그인 기능
     public String login(UserLoginDto request) {
-        User user = userRepository.findByuId(request.getLogin_id())
+        User user = userRepository.findByUId(request.getLogin_id())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고객 아이디입니다."));
 
         if (!user.getUPassword().equals(request.getPassword())) {
@@ -26,11 +25,12 @@ public class UserService {
         return user.getUName() + "님, 환영합니다!";
     }
 
-
-    @Transactional // 데이터 저장 시 에러가 나면 롤백해주는 안전장치
+    //회원가입 기능
+    @Transactional
     public String signup(UserSignupDto request) {
 
-        userRepository.findByuId(request.getLogin_id())
+        //아이디 중복 검사
+        userRepository.findByUId(request.getLogin_id())
                 .ifPresent(u -> {
                     throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
                 });
@@ -38,11 +38,11 @@ public class UserService {
 
         User user = new User();
 
-        // 3. DTO의 값을 엔티티의 변수에 하나씩 세팅 (이 부분이 중요!)
-        user.setUId(request.getLogin_id());      // DTO(login_id) -> Entity(uId)
-        user.setUPassword(request.getPassword()); // DTO(password) -> Entity(uPassword)
-        user.setUName(request.getName());        // DTO(name) -> Entity(uName)
-        user.setUNum(request.getP_number());     // DTO(p_number) -> Entity(uNum)
+
+        user.setUId(request.getLogin_id());
+        user.setUPassword(request.getPassword());
+        user.setUName(request.getName());
+        user.setUNum(request.getP_number());
 
 
         userRepository.save(user);
