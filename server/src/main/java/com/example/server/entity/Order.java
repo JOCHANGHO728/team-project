@@ -31,3 +31,8 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 }
+
+public void addOrderDetail(OrderDetail detail) {
+    this.orderDetails.add(detail);
+    detail.setOrder(this);
+}
