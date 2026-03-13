@@ -10,8 +10,8 @@ COPY . .
 # 4. gradlew 실행 권한을 줍니다.
 RUN chmod +x ./gradlew
 
-# 5. 빌드합니다.
-RUN ./gradlew bootJar -x test
+# 5. 빌드합니다. (🔥 메모리 제한 및 데몬 비활성화 추가)
+RUN ./gradlew bootJar -x test --no-daemon -Dorg.gradle.jvmargs="-Xmx256m"
 
-# 6. 서버가 실행될 때 이 명령어를 씁니다. (수정된 부분)
+# 6. 서버가 실행될 때 이 명령어를 씁니다.
 ENTRYPOINT ["sh", "-c", "java -jar build/libs/*.jar"]
