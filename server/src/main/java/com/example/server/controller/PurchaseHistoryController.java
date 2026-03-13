@@ -24,7 +24,6 @@ public class PurchaseHistoryController {
     public ResponseEntity<List<PurchaseHistoryDto>> getUserPurchaseHistory(@PathVariable String uId) {
         List<PurchaseHistoryDto> historyList = purchaseHistoryService.getUserPurchaseHistory(uId);
 
-        // 데이터가 비어있어도 200 OK와 함께 빈 배열([])을 반환하는 것이 일반적입니다.
         return ResponseEntity.ok(historyList);
     }
 
