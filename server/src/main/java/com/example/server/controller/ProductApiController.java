@@ -31,3 +31,4 @@ public class ProductApiController {
         return ResponseEntity.ok(responseDtos);
     }
 }
+// 이름으로 제품 검색하는 컨트롤러
