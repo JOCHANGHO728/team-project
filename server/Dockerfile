@@ -1,19 +1,17 @@
-FROM eclipse-temurin:17-jdk-jammy
-
+FROM eclipse-temurin:17-jdk-jammy AS builder
 WORKDIR /app
 
-COPY . .
-
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle settings.gradle ./
 RUN chmod +x ./gradlew
 
-
+COPY src src
 RUN ./gradlew bootJar -x test --no-daemon -Dorg.gradle.jvmargs="-Xmx256m"
 
-ENTRYPOINT ["sh", "-c", "java -jar build/libs/*.jar"]
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
 
-# 5. 빌드합니다. (🔥 메모리 제한 및 데몬 비활성화 추가)
-RUN ./gradlew bootJar -x test --no-daemon -Dorg.gradle.jvmargs="-Xmx256m"
+COPY --from=builder /app/build/libs/*SNAPSHOT.jar app.jar
 
-# 6. 서버가 실행될 때 이 명령어를 씁니다.
-ENTRYPOINT ["sh", "-c", "java -jar build/libs/*.jar"]
-
+ENTRYPOINT ["java", "-XX:TieredStopAtLevel=1", "-Xmx512m", "-Xms256m", "-jar", "app.jar"]
