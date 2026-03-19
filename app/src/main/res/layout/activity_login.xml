@@ -65,11 +65,11 @@
             />
 
         <android.widget.Button
-            android:id="@+id/signup"
+            android:id="@+id/fingerprintLogin"
             android:layout_width="250sp"
             android:layout_height="75sp"
             android:background="@drawable/button_backgroud"
-            android:text="회원 가입(미사용)"
+            android:text="지문 인식으로 로그인"
             app:layout_constraintTop_toBottomOf="@id/login"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

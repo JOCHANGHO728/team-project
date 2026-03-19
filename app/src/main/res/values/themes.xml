@@ -5,5 +5,5 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.ManagementApp" parent="Base.Theme.ManagementApp" />
+    <style name="Theme.ManagementApp" parent="Base.Theme.ManagementApp"/>
 </resources>

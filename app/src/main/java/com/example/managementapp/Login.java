@@ -48,12 +48,6 @@ public class Login extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // 회원가입 화면으로 이동(SignUp)
-        /*binding.signup.setOnClickListener(v ->{
-            Intent intent = new Intent(Login.this, SignUp.class);
-            startActivity(intent);
-        });*/
-
         // 로그인 기능
         binding.login.setOnClickListener(v -> {
             String id = binding.loginID.getText().toString();
@@ -82,6 +76,18 @@ public class Login extends AppCompatActivity {
                 }
             });
 
+        });
+
+        // 회원가입 화면으로 이동(SignUp)
+        /*binding.signup.setOnClickListener(v ->{
+            Intent intent = new Intent(Login.this, SignUp.class);
+            startActivity(intent);
+        });*/
+
+        // 지문 인식 로그인
+        binding.fingerprintLogin.setOnClickListener(v ->{
+            Intent intent = new Intent(Login.this, FingerprintActivity.class);
+            startActivity(intent);
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
