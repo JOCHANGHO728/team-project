@@ -3,6 +3,7 @@ package com.example.managementapp.management.search;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -15,7 +16,6 @@ import com.example.managementapp.R;
 import com.example.managementapp.databinding.ActivitySearchBinding;
 import com.example.managementapp.management.Management;
 import com.example.managementapp.model.ApiService;
-import com.example.managementapp.model.ProductRequest;
 import com.example.managementapp.model.ProductResponse;
 
 import java.util.List;
@@ -31,6 +31,7 @@ public class Search extends AppCompatActivity {
     private static final String BASE_URL = "https://server-jc54.onrender.com";
     private ActivitySearchBinding binding;
     private ProductAdapter adapter;   // 🔥 추가: 어댑터 선언
+    private ProductResponse selectedProduct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,12 @@ public class Search extends AppCompatActivity {
         adapter = new ProductAdapter();
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
+
+        // 어댑터 클릭 리스너 추가
+        adapter.setOnProductClickListener(product -> {
+            selectedProduct = product;
+            binding.detail.setVisibility(View.VISIBLE);
+        });
 
 
         // 상품조회 기능
@@ -82,6 +89,16 @@ public class Search extends AppCompatActivity {
 
         });
 
+        // 상품 상세 조회
+        binding.detail.setOnClickListener(v -> {
+            if (selectedProduct == null) return;
+
+            Intent intent = new Intent(Search.this, DetailSearch.class);
+            intent.putExtra("product", selectedProduct);
+            startActivity(intent);
+        });
+
+
         // 관리 화면으로 돌아가기
         binding.out.setOnClickListener(v -> {
             Intent intent = new Intent(Search.this, Management.class);
@@ -94,6 +111,5 @@ public class Search extends AppCompatActivity {
             return insets;
         });
     }
-
 
 }
