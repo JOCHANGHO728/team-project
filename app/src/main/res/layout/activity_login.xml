@@ -5,6 +5,68 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Login">
+    tools:context=".Login"> <View
+    android:id="@+id/topBar"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:background="#6090ED"
+    app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="로그인"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/topBar"
+        app:layout_constraintEnd_toEndOf="@id/topBar"
+        app:layout_constraintStart_toStartOf="@id/topBar"
+        app:layout_constraintTop_toTopOf="@id/topBar" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topBar">
+
+        <EditText
+            android:id="@+id/et_login_id"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="아이디(이메일)"
+            android:inputType="textEmailAddress"
+            android:background="@drawable/border_background"
+            android:padding="10dp" />
+
+        <EditText
+            android:id="@+id/et_login_pw"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:hint="비밀번호"
+            android:inputType="textPassword"
+            android:background="@drawable/border_background"
+            android:padding="10dp" />
+
+        <Button
+            android:id="@+id/btn_login_submit"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#6090ED"
+            android:text="로그인"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:background="#6090ED"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
