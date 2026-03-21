@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Customer.Household_Ledger.household_Ledger">
+
+    <android.widget.Button
+        android:id="@+id/blue_button"
+        android:layout_width="match_parent"
+        android:layout_height="75sp"
+        android:background="#6090ED"
+        android:text="가계부 조회"
+        android:textSize="20sp"
+        app:layout_constraintBaseline_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/innerLayout"
+        android:layout_width="375sp"
+        android:layout_height="525sp"
+        android:padding="16dp"
+        android:background="@drawable/border_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/blue_button"
+        android:layout_marginTop="24dp"
+        >
+
+        <TextView
+            android:id="@+id/period"
+            android:layout_width="wrap_content"
+            android:layout_height="20sp"
+            android:text="선택한 기간이 여기에 표시됩니다."
+            android:textSize="15sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+        </TextView>
+
+        <android.widget.Button
+            android:id="@+id/buttonStartDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="시작날짜 선택"
+            android:background="@drawable/button_backgroud"
+            app:layout_constraintTop_toBottomOf="@id/period"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="12dp"
+            />
+
+        <TextView
+            android:id="@+id/StartDate"
+            android:layout_width="200sp"
+            android:layout_height="50sp"
+            android:textSize="15sp"
+            android:hint="XXXX-XX-XX"
+            android:gravity="bottom"
+            app:layout_constraintTop_toBottomOf="@id/period"
+            app:layout_constraintStart_toEndOf="@id/buttonStartDate"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="12dp"
+            >
+        </TextView>
+
+        <android.widget.Button
+            android:id="@+id/buttonEndDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="종료 날짜 선택"
+            android:background="@drawable/button_backgroud"
+            app:layout_constraintTop_toBottomOf="@id/buttonStartDate"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="12dp"
+            />
+
+        <TextView
+            android:id="@+id/EndDate"
+            android:layout_width="200sp"
+            android:layout_height="50sp"
+            android:textSize="15sp"
+            android:hint="XXXX-XX-XX"
+            android:gravity="bottom"
+            app:layout_constraintTop_toBottomOf="@id/StartDate"
+            app:layout_constraintStart_toEndOf="@id/buttonEndDate"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="12dp"
+            >
+        </TextView>
+
+        <android.widget.Button
+            android:id="@+id/buttonReset"
+            android:layout_width="250sp"
+            android:layout_height="75sp"
+            android:text="선택한 날짜 초기화"
+            android:background="@drawable/button_backgroud"
+            app:layout_constraintTop_toBottomOf="@id/buttonEndDate"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="30dp"
+            />
+
+        <android.widget.Button
+            android:id="@+id/buttonSearch"
+            android:layout_width="250sp"
+            android:layout_height="75sp"
+            android:text="조회"
+            android:background="@drawable/button_backgroud"
+            app:layout_constraintTop_toBottomOf="@id/buttonReset"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="30dp"
+            />
+
+        <android.widget.Button
+            android:id="@+id/buttonOut"
+            android:layout_width="250sp"
+            android:layout_height="75sp"
+            android:text="이전 페이지로 돌아가기"
+            android:background="@drawable/button_backgroud"
+            app:layout_constraintTop_toBottomOf="@id/buttonSearch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="30dp"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <android.widget.Button
+        android:layout_width="match_parent"
+        android:layout_height="75sp"
+        android:background="#6090ED"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
