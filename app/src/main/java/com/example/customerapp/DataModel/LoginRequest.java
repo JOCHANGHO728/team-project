@@ -1,11 +1,11 @@
 package com.example.customerapp.DataModel;
 
 public class LoginRequest {
-    private String id;
-    private String password;
+    private String uId;
+    private String uPassword;
 
-    public LoginRequest(String id, String password) {
-        this.id = id;
-        this.password = password;
+    public LoginRequest(String uId, String uPassword) {
+        this.uId = uId;
+        this.uPassword = uPassword;
     }
 }

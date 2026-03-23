@@ -1,15 +1,14 @@
 package com.example.customerapp;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.customerapp.DataModel.SignUpRequest;
-import com.example.customerapp.databinding.ActivityShoppingBasketBinding;
 import com.example.customerapp.databinding.ActivitySignUpBinding;
 
 import retrofit2.Retrofit;
@@ -38,6 +37,26 @@ public class SignUp extends AppCompatActivity {
             String uPassword = binding.etSignupPw.getText().toString();
             String uName = binding.etSignupName.getText().toString();
             String uNum = binding.etSignupPhone.getText().toString();
+
+            // 입력값 검증
+            if (uId.isEmpty()) {
+                Toast.makeText(SignUp.this, "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (uPassword.isEmpty()) {
+                Toast.makeText(SignUp.this, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (uName.isEmpty()) {
+                Toast.makeText(SignUp.this, "이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (uNum.isEmpty()) {
+                Toast.makeText(SignUp.this, "전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 모든 값이 정상적으로 입력된 경우, 요청 객체 생성
             SignUpRequest request = new SignUpRequest(uId, uPassword, uName, uNum);
 
 
