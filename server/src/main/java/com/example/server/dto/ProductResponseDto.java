@@ -5,13 +5,14 @@ import lombok.Getter;
 
 @Getter
 public class ProductResponseDto {
+    private Long pId;
     private String pName;
     private int pPrice;
     private int pQuantity;
     private String category;
 
-    
     public ProductResponseDto(Product product) {
+        this.pId = product.getPId();
         this.pName = product.getPName();
         this.pPrice = product.getPPrice();
         this.pQuantity = product.getPQuantity();

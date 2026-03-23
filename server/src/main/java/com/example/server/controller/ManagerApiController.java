@@ -24,46 +24,70 @@ public class ManagerApiController {
     // 1. 관리자 로그인
     @PostMapping("/login")
     public ApiResponse<String> login(@RequestBody ManagerLoginDto request) {
-        String message = managerService.login(request);
-        return ApiResponse.success("로그인 성공", message);
+        try {
+            String message = managerService.login(request);
+            return ApiResponse.success("로그인 성공", message);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(e.getMessage());
+        }
     }
 
     // 2. 전체 상품 조회
     @GetMapping("/products")
     public ApiResponse<List<ProductResponseDto>> getAllProducts() {
-        List<ProductResponseDto> products = productService.getAllProducts().stream()
-                .map(ProductResponseDto::new)
-                .collect(Collectors.toList());
-        return ApiResponse.success("전체 상품 조회 성공", products);
+        try {
+            List<ProductResponseDto> products = productService.getAllProducts().stream()
+                    .map(ProductResponseDto::new)
+                    .collect(Collectors.toList());
+            return ApiResponse.success("전체 상품 조회 성공", products);
+        } catch (Exception e) {
+            return ApiResponse.fail(e.getMessage());
+        }
     }
 
     // 3. 상품 등록
     @PostMapping("/products")
     public ApiResponse<Void> addProduct(@RequestBody ProductCreateDto request) {
-        productService.createProduct(request);
-        return ApiResponse.success("상품 등록 완료", null);
+        try {
+            productService.createProduct(request);
+            return ApiResponse.success("상품 등록 완료", null);
+        } catch (Exception e) {
+            return ApiResponse.fail(e.getMessage());
+        }
     }
 
     // 4. 상품 수정
     @PutMapping("/products/{pId}")
     public ApiResponse<Void> updateProduct(@PathVariable Long pId, @RequestBody ProductUpdateDto request) {
-        productService.updateProduct(pId, request);
-        return ApiResponse.success("상품 수정 완료", null);
+        try {
+            productService.updateProduct(pId, request);
+            return ApiResponse.success("상품 수정 완료", null);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(e.getMessage());
+        }
     }
 
     // 5. 상품 삭제
     @DeleteMapping("/products/{pId}")
     public ApiResponse<Void> deleteProduct(@PathVariable Long pId) {
-        productService.deleteProduct(pId);
-        return ApiResponse.success("상품 삭제 완료", null);
+        try {
+            productService.deleteProduct(pId);
+            return ApiResponse.success("상품 삭제 완료", null);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(e.getMessage());
+        }
     }
 
     // 6. 상품 검색
     @GetMapping("/products/search")
     public ApiResponse<List<ProductResponseDto>> searchProducts(@RequestParam("name") String keyword) {
-        List<ProductResponseDto> products = productService.searchProductsByName(keyword).stream()
-                .map(ProductResponseDto::new)
-                .collect(Collectors.toList());
-        return ApiResponse.success("상품 검색 성공", products);
+        try {
+            List<ProductResponseDto> products = productService.searchProductsByName(keyword).stream()
+                    .map(ProductResponseDto::new)
+                    .collect(Collectors.toList());
+            return ApiResponse.success("상품 검색 성공", products);
+        } catch (Exception e) {
+            return ApiResponse.fail(e.getMessage());
+        }
     }
 }
