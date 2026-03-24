@@ -7,4 +7,75 @@
     android:layout_height="match_parent"
     tools:context=".Customer.Customer">
 
+    <View
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:background="#6090ED"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="고객 메인 메뉴"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/topBar"
+        app:layout_constraintEnd_toEndOf="@id/topBar"
+        app:layout_constraintStart_toStartOf="@id/topBar"
+        app:layout_constraintTop_toTopOf="@id/topBar" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topBar">
+
+        <Button
+            android:id="@+id/btn_household_ledger"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:backgroundTint="#6090ED"
+            android:text="가계부 (Household Ledge)"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_shopping_category"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#6090ED"
+            android:text="쇼핑 (Shopping Category)"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_request_product"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#6090ED"
+            android:text="AI 상품 요청 (Request Product)"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_shopping_basket"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#6090ED"
+            android:text="장바구니 (Shopping Basket)"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:background="#6090ED"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
