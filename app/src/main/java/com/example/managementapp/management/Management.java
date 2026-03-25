@@ -36,7 +36,8 @@ public class Management extends AppCompatActivity {
 
         // 데이터 베이스 추천(ai 기능)
         binding.suggest.setOnClickListener(v -> {
-
+            Intent intent = new Intent(Management.this, Change.class);
+            startActivity(intent);
         });
 
         // 로그아웃
