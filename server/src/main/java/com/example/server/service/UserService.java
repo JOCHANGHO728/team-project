@@ -5,6 +5,7 @@ import com.example.server.dto.UserSignupDto;
 import com.example.server.entity.User;
 import com.example.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,12 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    // 수정: 비밀번호 평문 저장/비교 → BCrypt 해시로 변경
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public String login(UserLoginDto request) {
         User user = userRepository.findByUId(request.getUId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고객 아이디입니다."));
 
-        if (!user.getUPassword().equals(request.getUPassword())) {
+        // 수정: .equals() 대신 BCrypt matches()로 비교
+        if (!passwordEncoder.matches(request.getUPassword(), user.getUPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         return user.getUName() + "님, 환영합니다!";
@@ -31,7 +35,8 @@ public class UserService {
 
         User user = new User();
         user.setUId(request.getUId());
-        user.setUPassword(request.getUPassword());
+        // 수정: 비밀번호를 BCrypt로 해시해서 저장
+        user.setUPassword(passwordEncoder.encode(request.getUPassword()));
         user.setUName(request.getUName());
         user.setUNum(request.getUNum());
         userRepository.save(user);

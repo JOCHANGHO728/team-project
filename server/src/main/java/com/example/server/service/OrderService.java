@@ -26,6 +26,11 @@ public class OrderService {
     @Transactional
     public void createOrder(OrderCreateDto request) {
 
+        // 수정: 주문 항목이 비어있는 경우 방어 코드 추가
+        if (request.getItems() == null || request.getItems().isEmpty()) {
+            throw new IllegalArgumentException("주문 항목이 비어있습니다.");
+        }
+
         User user = userRepository.findByUId(request.getUId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고객 아이디입니다."));
 
@@ -35,8 +40,13 @@ public class OrderService {
 
         int totalAmount = 0;
 
-
         for (OrderItemDto itemDto : request.getItems()) {
+
+            // 수정: 수량이 0 이하인 경우 방어 코드 추가
+            if (itemDto.getQuantity() <= 0) {
+                throw new IllegalArgumentException("주문 수량은 1 이상이어야 합니다.");
+            }
+
             Product product = productRepository.findById(itemDto.getPId())
                     .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. 상품 번호: " + itemDto.getPId()));
 

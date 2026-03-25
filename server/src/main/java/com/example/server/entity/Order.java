@@ -28,7 +28,8 @@ public class Order {
     @Column(name = "total_amount")
     private int totalAmount;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    // 수정: orphanRemoval = true 추가 — 리스트에서 제거된 OrderDetail이 DB에서도 삭제됨
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
     public void addOrderDetail(OrderDetail detail) {

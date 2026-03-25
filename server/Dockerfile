@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-jammy
+FROM eclipse-temurin:17-jdk-jammy AS builder
 
 WORKDIR /app
 
@@ -6,13 +6,12 @@ COPY . .
 
 RUN chmod +x ./gradlew
 
-
 RUN ./gradlew bootJar -x test --no-daemon -Dorg.gradle.jvmargs="-Xmx256m"
 
-ENTRYPOINT ["sh", "-c", "java -jar build/libs/*.jar"]
+FROM eclipse-temurin:17-jre-jammy
 
+WORKDIR /app
 
-RUN ./gradlew bootJar -x test --no-daemon -Dorg.gradle.jvmargs="-Xmx256m"
+COPY --from=builder /app/build/libs/app.jar app.jar
 
-
-ENTRYPOINT ["sh", "-c", "java -jar build/libs/*.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
