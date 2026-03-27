@@ -1,10 +1,19 @@
+
 FROM eclipse-temurin:17-jdk-jammy AS builder
 
 WORKDIR /app
 
-COPY . .
-
+COPY build.gradle settings.gradle ./
+COPY gradle ./gradle
+COPY gradlew ./
 RUN chmod +x ./gradlew
+
+
+RUN ./gradlew dependencies --no-daemon -Dorg.gradle.jvmargs="-Xmx256m" || true
+
+
+COPY src ./src
+
 
 RUN ./gradlew bootJar -x test --no-daemon -Dorg.gradle.jvmargs="-Xmx256m"
 
