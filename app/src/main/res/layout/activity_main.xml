@@ -1,102 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA"
-    tools:context=".MainActivity">
+    android:background="#FFFFFF"
+    tools:context=".Customer.Customer">
 
-    <View
-        android:id="@+id/topBackground"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toTopOf="@id/card_action_container"
+    <TextView
+        android:id="@+id/tv_customer_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"
+        android:text="CUSTOMER APP"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:lineSpacingExtra="4dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_main_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CUSTOMER APP"
-        android:textColor="#111111"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:letterSpacing="-0.02"
-        app:layout_constraintBottom_toBottomOf="@id/topBackground"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/topBackground"
-        app:layout_constraintVertical_bias="0.45" />
-
-    <TextView
-        android:id="@+id/tv_main_subtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="당신을 위한 트렌디한 쇼핑의 시작"
-        android:textColor="#777777"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_main_title" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_action_container"
+    <LinearLayout
+        android:id="@+id/content_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="24dp"
-        app:cardBackgroundColor="#FFFFFF"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="8dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintTop_toBottomOf="@id/tv_customer_title">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_category"
+            android:layout_width="98dp"
+            android:layout_height="match_parent"
+            android:background="#F0F0F0"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_category_left" />
 
         <LinearLayout
-            android:id="@+id/layout_buttons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonLogin"
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/sv_product_search"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="로그인하기"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:backgroundTint="#111111"
-                app:cornerRadius="16dp"
-                app:elevation="0dp" />
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="#F5F5F5"
+                app:queryHint="상품 검색"
+                app:iconifiedByDefault="false"
+                app:queryBackground="@android:color/transparent" />
 
-            <com.google.android.material.button.MaterialButton
-                style="?attr/materialButtonOutlinedStyle"
-                android:id="@+id/buttonSignup"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_product_list"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="12dp"
-                android:text="회원가입"
-                android:textColor="#111111"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:cornerRadius="16dp"
-                app:strokeColor="#111111"
-                app:strokeWidth="1dp" />
-
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_product" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
-    <View
-        android:id="@+id/bottomBar"
+    </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@android:color/transparent"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
+        android:background="#FFFFFF"
+        app:elevation="8dp"
+        app:itemIconSize="24dp"
+        app:itemPaddingBottom="12dp"
+        app:itemPaddingTop="12dp"
+        app:itemIconTint="#000000"
+        app:itemTextColor="#000000"
+        app:itemActiveIndicatorStyle="@null"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_nav_menu"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
