@@ -5,40 +5,104 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#80DEEA"
+    android:background="#F8F9FA"
     tools:context=".MainActivity">
 
-    <android.widget.Button
-        android:id="@+id/blue_button"
+    <!-- CUSTOMER 화면과 동일한 상단 구조 -->
+    <View
+        android:id="@+id/topBackground"
         android:layout_width="match_parent"
-        android:layout_height="75sp"
-        android:background="#6090ED"
-        android:text="관리자용 앱"
-        app:layout_constraintBaseline_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/card_action_container" />
 
-    <android.widget.Button
-        android:id="@+id/login"
-        android:layout_width="200sp"
+    <!-- 타이틀 -->
+    <TextView
+        android:id="@+id/tv_admin_title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="로그인 및 회원가입"
-        android:background="@drawable/button_backgroud"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@id/blue_button2"
+        android:text="Management APP"
+        android:textColor="#111111"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:letterSpacing="-0.02"
+        app:layout_constraintTop_toTopOf="@id/topBackground"
+        app:layout_constraintBottom_toBottomOf="@id/topBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintVertical_bias="0.45" />
 
-    <android.widget.Button
-        android:id="@+id/blue_button2"
-        android:layout_width="match_parent"
-        android:layout_height="75sp"
-        android:background="#6090ED"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <!-- 서브 타이틀 -->
+    <TextView
+        android:id="@+id/tv_admin_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="관리자를 위한 스마트한 시작"
+        android:textColor="#777777"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_admin_title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 카드 컨테이너 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_action_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="24dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- 로그인 버튼 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="로그인"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="#111111"
+                app:cornerRadius="16dp"
+                app:elevation="0dp" />
+
+            <!-- 관리자용 앱 버튼 (회원가입 제거) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonAdmin"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:text="관리자용 앱"
+                android:textColor="#111111"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                style="?attr/materialButtonOutlinedStyle"
+                app:cornerRadius="16dp"
+                app:strokeColor="#111111"
+                app:strokeWidth="1dp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 하단 바 -->
+    <View
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
