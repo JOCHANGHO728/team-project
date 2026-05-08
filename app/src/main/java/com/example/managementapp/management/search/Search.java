@@ -3,18 +3,17 @@ package com.example.managementapp.management.search;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.managementapp.R;
 import com.example.managementapp.databinding.ActivitySearchBinding;
 import com.example.managementapp.management.Management;
+import com.example.managementapp.model.ApiResponse;
 import com.example.managementapp.model.ApiService;
 import com.example.managementapp.model.ProductResponse;
 
@@ -54,7 +53,9 @@ public class Search extends AppCompatActivity {
         // 어댑터 클릭 리스너 추가
         adapter.setOnProductClickListener(product -> {
             selectedProduct = product;
-            binding.detail.setVisibility(View.VISIBLE);
+            Intent intent = new Intent(Search.this, Update.class);
+            intent.putExtra("product", selectedProduct);
+            startActivity(intent);
         });
 
 
@@ -62,42 +63,31 @@ public class Search extends AppCompatActivity {
         binding.search.setOnClickListener(v -> {
             String id = binding.productID.getText().toString();
 
-            searchApi.search(id).enqueue(new Callback<List<ProductResponse>>() {
+            searchApi.search(id).enqueue(new Callback<ApiResponse<List<ProductResponse>>>() {
                 @Override
-                public void onResponse(Call<List<ProductResponse>> call, Response<List<ProductResponse>> response) {
+                public void onResponse(Call<ApiResponse<List<ProductResponse>>> call, Response<ApiResponse<List<ProductResponse>>> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        List<ProductResponse> products = response.body();
-                        Log.d("Connect_SUCCESS", "상품 개수: " + products.size());// 전체 리스트 로그 출력
-                        for (int i = 0; i < products.size(); i++) {
-                            ProductResponse product = products.get(i);
-                            Log.d("Product_List", "index=" + i + ", data=" + product.toString());
-
-                            // 🔥 RecyclerView에 데이터 넣기
+                        ApiResponse<List<ProductResponse>> body = response.body();
+                        List<ProductResponse> products = body.getData();
+                        if (body.isSuccess() && products != null) {
+                            Log.d("Connect_SUCCESS", "상품 개수: " + products.size());
                             adapter.setProductList(products);
+                        } else {
+                            adapter.setProductList(java.util.Collections.emptyList());
+                            Log.w("Connect_WARNING", "검색 실패: " + body.getMessage());
                         }
-
                     } else {
-                        Log.w("Connect_WARNING", "응답은 성공했지만 body가 없음");
+                        Log.w("Connect_WARNING", "HTTP " + response.code());
                     }
                 }
 
                 @Override
-                public void onFailure(Call<List<ProductResponse>> call, Throwable t) {
+                public void onFailure(Call<ApiResponse<List<ProductResponse>>> call, Throwable t) {
                     Log.e("Connect_FAIL", "상품 조회 실패: " + t.getMessage());
                 }
             });
 
         });
-
-        // 상품 상세 조회
-        binding.detail.setOnClickListener(v -> {
-            if (selectedProduct == null) return;
-
-            Intent intent = new Intent(Search.this, DetailSearch.class);
-            intent.putExtra("product", selectedProduct);
-            startActivity(intent);
-        });
-
 
         // 관리 화면으로 돌아가기
         binding.out.setOnClickListener(v -> {

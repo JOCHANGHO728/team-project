@@ -40,6 +40,15 @@ public class Management extends AppCompatActivity {
             startActivity(intent);
         });
 
+        /**
+         // 미등록 바코드 스캔 확인
+         binding.s.setOnClickListener(v -> {
+         Intent intent = new Intent(Management.this, Change.class);
+         startActivity(intent);
+         });
+         */
+
+
         // 로그아웃
         binding.logout.setOnClickListener(v -> {
             Intent intent = new Intent(Management.this, MainActivity.class);

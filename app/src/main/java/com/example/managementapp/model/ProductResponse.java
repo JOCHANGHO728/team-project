@@ -1,8 +1,10 @@
 package com.example.managementapp.model;
-import com.google.gson.annotations.SerializedName;
-public class ProductResponse {
 
-    //p_id	p_name	p_price	p_quantity	b_key	category
+import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
+
+public class ProductResponse implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @SerializedName("pId")
     private Long p_id;
@@ -13,7 +15,7 @@ public class ProductResponse {
     @SerializedName("pPrice")
     private int p_price;
 
-    @SerializedName("p_Quantity")
+    @SerializedName("pQuantity")
     private int p_quantity;
 
     @SerializedName("bKey")
@@ -22,7 +24,6 @@ public class ProductResponse {
     @SerializedName("category")
     private String category;
 
-    // 🔥 Getter 추가
     public Long getP_id() { return p_id; }
     public String getP_name() { return p_name; }
     public int getP_price() { return p_price; }

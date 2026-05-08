@@ -1,9 +1,6 @@
 package com.example.managementapp;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -13,7 +10,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -38,7 +34,6 @@ public class Login extends AppCompatActivity {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiService loginapi = retrofit.create(ApiService.class);
@@ -55,24 +50,28 @@ public class Login extends AppCompatActivity {
             LoginRequest request = new LoginRequest(id, password);
             Log.d("LOGIN_Try", "로그인 시도");
 
-            loginapi.login(request).enqueue(new Callback<String>() {
+            loginapi.login(request).enqueue(new Callback<LoginResponse>() {
                 @Override
-                public void onResponse(Call<String> call, Response<String> response) {
+                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        String message = response.body();
-                        Toast.makeText(Login.this, "로그인 성공: " + message, Toast.LENGTH_SHORT).show();
-
-                        Intent intent = new Intent(Login.this, Management.class);
-                        startActivity(intent);
+                        LoginResponse body = response.body();
+                        if (body.isSuccess()) {
+                            Toast.makeText(Login.this, "로그인 성공", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(Login.this, Management.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(Login.this, body.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.w("Login error", body.getMessage());
+                        }
                     } else {
                         Toast.makeText(Login.this, "로그인 실패", Toast.LENGTH_SHORT).show();
-                        Log.w("Login error", "로그인 정보 오류");
+                        Log.w("Login error", "HTTP " + response.code());
                     }
                 }
 
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Log.e("Connect_WARNING", "서버 연결 실패" + t.getMessage());
+                public void onFailure(Call<LoginResponse> call, Throwable t) {
+                    Log.e("Connect_WARNING", "서버 연결 실패: " + t.getMessage());
                 }
             });
 

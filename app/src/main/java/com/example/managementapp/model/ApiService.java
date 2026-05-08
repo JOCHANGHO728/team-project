@@ -17,26 +17,26 @@ public interface ApiService {
     Call<SignUpResponse> register(@Body SignUpRequest request);
 
     // 관리자 로그인
-    @POST("login")
+    @POST("/api/v1/managers/login")
     Call<LoginResponse> login(@Body LoginRequest request);
 
     // 상품 조회
     @GET("/api/v1/managers/products/search")
-    Call<List<ProductResponse>> search(@Query("name") String keyword);
+    Call<ApiResponse<List<ProductResponse>>> search(@Query("name") String keyword);
 
 
     // 상품 추가
     @POST("/api/v1/managers/products")
-    Call<String> addProduct(@Body ProductCreateRequest request);
+    Call<ApiResponse<Void>> addProduct(@Body ProductCreateRequest request);
 
     // 상품 수정
     @PUT("/api/v1/managers/products/{pId}")
-    Call<String> updateProduct(
+    Call<ApiResponse<Void>> updateProduct(
             @Path("pId") Long productId,
             @Body ProductUpdateRequest request
     );
 
     // 상품 삭제
     @DELETE("/api/v1/managers/products/{pId}")
-    Call<String> deleteProduct(@Path("pId") Long productId);
+    Call<ApiResponse<Void>> deleteProduct(@Path("pId") Long productId);
 }

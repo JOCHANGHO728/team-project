@@ -5,151 +5,171 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F2F3F5"
     tools:context=".management.Change">
 
-    <android.widget.Button
-        android:id="@+id/blue_button"
-        android:layout_width="match_parent"
-        android:layout_height="75sp"
-        android:background="#6090ED"
-        android:text="상품 데이터베이스 수정"
-        android:textSize="20sp"
-        app:layout_constraintBaseline_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+    <TextView
+        android:id="@+id/tv_change_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="56dp"
+        android:text="상품 정보 수정"
+        android:textColor="#111111"
+        android:textSize="34sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/innerLayout"
-        android:layout_width="375sp"
-        android:layout_height="525sp"
-        android:padding="16dp"
-        android:background="@drawable/border_background"
-        app:layout_constraintStart_toStartOf="parent"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="14dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/blue_button"
-        android:layout_marginTop="24dp"
-        >
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_change_title">
 
-        <TextView
-            android:id="@+id/idtext"
-            android:layout_width="wrap_content"
-            android:layout_height="20sp"
-            android:text="검색하고 싶은 상품"
-            android:textSize="15sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            >
-        </TextView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="18dp">
 
-        <EditText
-            android:id="@+id/productID"
-            android:layout_width="350sp"
-            android:layout_height="50sp"
-            app:layout_constraintTop_toBottomOf="@+id/idtext"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            <TextView
+                android:id="@+id/tv_barcode_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="바코드"
+                android:textColor="#111111"
+                android:textSize="14sp"
+                android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/resultText"
-            android:layout_width="wrap_content"
-            android:layout_height="20sp"
-            android:text="조회 결과"
-            app:layout_constraintTop_toBottomOf="@+id/productID"
-            app:layout_constraintStart_toStartOf="parent"
-            />
+            <TextView
+                android:id="@+id/tv_display_barcode"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:textColor="#495057"
+                android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/result"
-            android:layout_width="350sp"
-            android:layout_height="50sp"
-            app:layout_constraintTop_toBottomOf="@id/resultText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="상품명"
+                android:textColor="#111111"
+                android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/amountText"
-            android:layout_width="wrap_content"
-            android:layout_height="20sp"
-            android:text="현재 수량"
-            app:layout_constraintTop_toBottomOf="@+id/result"
-            app:layout_constraintStart_toStartOf="parent"
-            />
+            <EditText
+                android:id="@+id/tv_display_name"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edittext_border"
+                android:gravity="center_vertical"
+                android:hint="상품명 입력"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:paddingHorizontal="12dp"
+                android:textColor="#111111"
+                android:textSize="15sp" />
 
-        <TextView
-            android:id="@+id/amount"
-            android:layout_width="350sp"
-            android:layout_height="50sp"
-            app:layout_constraintTop_toBottomOf="@id/amountText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="가격 정보 입력"
+                android:textColor="#111111"
+                android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/changeText"
-            android:layout_width="wrap_content"
-            android:layout_height="20sp"
-            android:text="변경할 수량 입력"
-            app:layout_constraintTop_toBottomOf="@+id/amount"
-            app:layout_constraintStart_toStartOf="parent"
-            />
+            <EditText
+                android:id="@+id/edit_price"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edittext_border"
+                android:gravity="center_vertical"
+                android:inputType="number"
+                android:paddingHorizontal="12dp"
+                android:textColor="#111111"
+                android:textColorHint="#9CA3AF"
+                android:textSize="15sp" />
 
-        <EditText
-            android:id="@+id/changeAmount"
-            android:layout_width="350sp"
-            android:layout_height="50sp"
-            app:layout_constraintTop_toBottomOf="@id/changeText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="수량 정보 입력"
+                android:textColor="#111111"
+                android:textSize="14sp" />
 
-        <android.widget.Button
-            android:id="@+id/search"
-            android:layout_width="250sp"
-            android:layout_height="75sp"
-            android:background="@drawable/button_backgroud"
-            android:text="상품 검색"
-            app:layout_constraintTop_toBottomOf="@id/changeAmount"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="24dp"
-            />
+            <EditText
+                android:id="@+id/changeAmount"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edittext_border"
+                android:gravity="center_vertical"
+                android:inputType="number"
+                android:paddingHorizontal="12dp"
+                android:textColor="#111111"
+                android:textColorHint="#9CA3AF"
+                android:textSize="15sp" />
 
-        <android.widget.Button
-            android:id="@+id/change"
-            android:layout_width="250sp"
-            android:layout_height="75sp"
-            android:background="@drawable/button_backgroud"
-            android:text="수량 변경"
-            app:layout_constraintTop_toBottomOf="@id/search"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="24dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="카테고리"
+                android:textColor="#111111"
+                android:textSize="14sp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <EditText
+                android:id="@+id/edit_category"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edittext_border"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:textColor="#111111"
+                android:textColorHint="#9CA3AF"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-    <android.widget.Button
-        android:layout_width="match_parent"
-        android:layout_height="75sp"
-        android:background="#6090ED"
-        android:elevation="5dp"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/change"
+        android:layout_width="0dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="18dp"
+        android:text="수정 사항 저장"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:backgroundTint="#09090B"
+        app:cornerRadius="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <android.widget.Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/out"
-        android:layout_width="250sp"
-        android:layout_height="50sp"
-        android:background="@drawable/button_background2"
-        android:text="관리 화면으로 돌아가기"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:alpha="0"
+        android:enabled="false"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:elevation="10dp"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
