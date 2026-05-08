@@ -23,6 +23,9 @@ public class Category extends AppCompatActivity {
     private ProductAdapter adapter;
     private List<Product> productList;
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,26 +52,15 @@ public class Category extends AppCompatActivity {
         });
     }
 
-    // 테스트용 하드 코딩 데이터
-    private List<Product> getProductsByCategory(String category) {
-        List<Product> list = new ArrayList<>();
-        switch (category) {
-            case "가정용품":
-                list.add(new Product("티셔츠", 15000));
-                list.add(new Product("청바지", 30000));
-                break;
-            case "전자제품":
-                list.add(new Product("노트북", 1200000));
-                list.add(new Product("스마트폰", 900000));
-                break;
-            case "식품":
-                list.add(new Product("사과", 3000));
-                list.add(new Product("우유", 2000));
-                break;
-        }
-        return list;
+    private List<Product> getProductsByCategory(String categoryName) {
+        List<Product> filteredList = new ArrayList<>();
+
+        // TODO: 여기에 Firebase나 DB에서 데이터를 가져와서 filteredList에 추가하는 로직을 구현하세요.
+
+        return filteredList;
     }
-}
+
+    }
 
 /*
 // CategoryActivity.java

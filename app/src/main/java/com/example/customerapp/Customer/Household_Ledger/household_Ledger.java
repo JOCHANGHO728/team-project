@@ -17,6 +17,13 @@ import com.example.customerapp.databinding.ActivityHouseholdLedgerBinding;
 
 import java.util.Calendar;
 
+import android.content.Intent;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+// 이동할 화면들 (패키지 경로 확인)
+import com.example.customerapp.Customer.Customer;
+import com.example.customerapp.Customer.Shoppingbasket.ShoppingBasket;
+import com.example.customerapp.Customer.MyInfo;
+
 public class household_Ledger extends AppCompatActivity {
     private ActivityHouseholdLedgerBinding binding;
     private TextView textPeriod;
@@ -82,16 +89,51 @@ public class household_Ledger extends AppCompatActivity {
             String startDate = null;
             String endDate = null;
         });
-
+/*
         // 메인 페이지로 돌아가기
         binding.buttonOut.setOnClickListener(v -> {
             Intent intent = new Intent(household_Ledger.this, MainActivity.class);
             startActivity(intent);
         });
+*/
+        // --- 하단 네비게이션 바 설정 ---
+
+        // 1. 현재 탭을 '가계부'로 활성화
+        binding.bottomNavigation.setSelectedItemId(R.id.nav_ledger);
+
+        // 2. 클릭 리스너 설정
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            Intent intent = null;
+
+            if (id == R.id.nav_ledger) {
+                return true; // 현재 화면이므로 아무것도 안 함
+            }
+            else if (id == R.id.nav_shopping) {
+                // 상품목록으로 이동
+                intent = new Intent(this, Customer.class);
+            }
+            else if (id == R.id.nav_cart) {
+                // 장바구니로 이동
+                intent = new Intent(this, ShoppingBasket.class);
+            }
+            else if (id == R.id.nav_my_info) {
+                // 내 정보로 이동
+                intent = new Intent(this, MyInfo.class);
+            }
+
+            if (intent != null) {
+                startActivity(intent);
+                overridePendingTransition(0, 0); // 애니메이션 제거
+                finish(); // 현재 화면 종료
+                return true;
+            }
+            return false;
+        });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
     }

@@ -21,9 +21,9 @@ public class Product {
     @SerializedName("category")
     private String category;
 
-    public Long getPId() { return pId; }
-    public String getPName() { return pName; }
-    public int getPPrice() { return pPrice; }
+    public Long getId() { return pId; }
+    public String getName() { return pName; }
+    public int getPrice() { return pPrice; }
     public int getPQuantity() { return pQuantity; }
     public String getBKey() { return bKey; }
     public String getCategory() { return category; }
@@ -32,14 +32,4 @@ public class Product {
     private int cartQuantity = 1;
     public int getCartQuantity() { return cartQuantity; }
     public void setCartQuantity(int qty) { cartQuantity = qty; }
-
-
-    // 상품 이미지 초기화
-    public String getImageUrl() {
-        // 서버에서 이미지 필드가 추가되면 여기에 매핑
-        // 예: return this.imageUrl;
-
-        // 현재는 테스트용 placeholder 이미지 사용
-        return "https://via.placeholder.com/150?text=" + pName;
-    }
 }

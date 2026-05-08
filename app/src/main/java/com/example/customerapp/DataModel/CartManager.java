@@ -22,7 +22,7 @@ public class CartManager {
 
     public void addItem(Product product) {
         for (Product item : cartItems) {
-            if (item.getPId().equals(product.getPId())) {
+            if (item.getId().equals(product.getId())) {
                 item.setCartQuantity(item.getCartQuantity() + 1);
                 return;
             }
@@ -38,7 +38,7 @@ public class CartManager {
     public int getTotalPrice() {
         int total = 0;
         for (Product item : cartItems) {
-            total += item.getPPrice() * item.getCartQuantity();
+            total += item.getPrice() * item.getCartQuantity();
         }
         return total;
     }

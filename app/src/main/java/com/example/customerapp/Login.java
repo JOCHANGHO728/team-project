@@ -73,10 +73,11 @@ public class Login extends AppCompatActivity {
         });
 
         // 회원가입 화면 이동
+        /*
         binding.btnSignup.setOnClickListener(v -> {
             startActivity(new Intent(Login.this, SignUp.class));
         });
-
+*/
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
