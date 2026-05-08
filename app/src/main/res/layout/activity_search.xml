@@ -1,105 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".SignUp">
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:id="@+id/main"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:background="#F8F9FA"
+                                                   tools:context=".management.search.Search">
 
-    <android.widget.Button
-        android:id="@+id/blue_button"
-        android:layout_width="match_parent"
-        android:layout_height="75sp"
-        android:background="#6090ED"
-        android:text="상품 조회"
-        android:textSize="20sp"
-        app:layout_constraintBaseline_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/innerLayout"
-        android:layout_width="375dp"
-        android:layout_height="525dp"
-        android:padding="16dp"
-        android:background="@drawable/border_background"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/blue_button"
-        android:layout_marginTop="24dp"
-        >
-
-        <TextView
-            android:id="@+id/producttext"
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top"
             android:layout_width="wrap_content"
-            android:layout_height="20sp"
-            android:text="검색하고 싶은 상품"
-            android:textSize="15sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            >
-        </TextView>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.08" />
 
-        <EditText
-            android:id="@+id/productID"
-            android:layout_width="350sp"
-            android:layout_height="50sp"
-            app:layout_constraintTop_toBottomOf="@+id/producttext"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:inputType="text"
-            />
+    <TextView
+            android:id="@+id/tv_search_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="상품 조회"
+            android:textColor="#111111"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:letterSpacing="-0.02"
+            app:layout_constraintTop_toTopOf="@id/guideline_top"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.cardview.widget.CardView
+            android:id="@+id/card_search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="24dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="6dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_search_title">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp">
+
+            <EditText
+                    android:id="@+id/productID"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="검색하고 싶은 상품명 입력"
+                    android:inputType="text"
+                    android:textSize="16sp" />
+
+            <ImageButton
+                    android:id="@+id/search"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_search"
+                    app:tint="#111111" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+            android:id="@+id/card_list_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            app:layout_constraintBottom_toTopOf="@id/out"
+            app:layout_constraintTop_toBottomOf="@id/card_search_bar">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="350dp"
-            android:layout_height="200dp"
-            android:paddingTop="12dp"
-            android:scrollbars="vertical"
-            android:fadeScrollbars="false"
-            android:scrollbarSize="6dp"
-            android:scrollbarThumbVertical="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/productID"
-            app:layout_constraintBottom_toTopOf="@id/search"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:padding="16dp"
+                android:scrollbars="vertical" />
+    </androidx.cardview.widget.CardView>
 
-
-        <android.widget.Button
-            android:id="@+id/search"
-            android:layout_width="250sp"
-            android:layout_height="55sp"
-            android:background="@drawable/button_backgroud"
-            android:text="검색"
-            app:layout_constraintTop_toBottomOf="@id/recyclerView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="12dp"
-            />
-
-        <android.widget.Button
+    <com.google.android.material.button.MaterialButton
             android:id="@+id/out"
-            android:layout_width="250sp"
-            android:layout_height="55sp"
-            android:background="@drawable/button_backgroud"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
             android:text="관리 화면으로 돌아가기"
-            app:layout_constraintTop_toBottomOf="@id/search"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="#777777"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="12dp"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <android.widget.Button
-        android:layout_width="match_parent"
-        android:layout_height="75sp"
-        android:background="#6090ED"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+            app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

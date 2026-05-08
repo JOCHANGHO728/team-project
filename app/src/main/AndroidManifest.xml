@@ -2,9 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <!--지문 인식용으로 추가-->
-    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.INTERNET"/> <!-- 지문 인식용으로 추가 -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
 
     <application
             android:allowBackup="true"
@@ -16,6 +15,11 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.ManagementApp"
             tools:targetApi="31">
+        <activity
+                android:name=".management.Suggest$UnregistedProduct"
+                android:exported="false"
+                android:label="@string/title_activity_unregisted_product"
+                android:theme="@style/Theme.ManagementApp"/>
         <activity
                 android:name=".management.Change"
                 android:exported="false"/>
