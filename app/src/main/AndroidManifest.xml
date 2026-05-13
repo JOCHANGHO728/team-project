@@ -12,11 +12,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CustomerApp"
         tools:targetApi="31">
+
         <activity
-            android:name=".Customer.Shoppingbasket.MakeBarcode"
-            android:exported="false" />
+            android:name=".Customer.MyInfo"
+            android:exported="true"> <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+
         <activity
             android:name=".Customer.Shoppingbasket.ShoppingBasket"
+            android:exported="false" />
+
+        <activity
+            android:name=".Customer.Shoppingbasket.Payment"
+            android:exported="false" />
+        <activity
+            android:name=".Customer.Household_Ledger.household_Ledger"
+            android:exported="false" />
+        <activity
+            android:name=".Customer.Shoppingbasket.MakeBarcode"
             android:exported="false" />
         <activity
             android:name=".Customer.Customer"
@@ -34,21 +50,11 @@
             android:name=".Customer.Shopping.Shopping"
             android:exported="false" />
         <activity
-            android:name=".Customer.Household_Ledger.household_Ledger"
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.login.shopping_List"
-            android:exported="false"
-            android:label="@string/title_activity_shopping_list" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:name=".Customer.Household_Ledger.LedgerResultActivity"
+            android:exported="false" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
-
 </manifest>
