@@ -17,16 +17,13 @@ import com.example.customerapp.databinding.ActivityHouseholdLedgerBinding;
 
 import java.util.Calendar;
 
-import android.content.Intent;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-// 이동할 화면들 (패키지 경로 확인)
 import com.example.customerapp.Customer.Customer;
 import com.example.customerapp.Customer.Shoppingbasket.ShoppingBasket;
 import com.example.customerapp.Customer.MyInfo;
 
 public class household_Ledger extends AppCompatActivity {
     private ActivityHouseholdLedgerBinding binding;
-    private TextView textPeriod;
     // 시작 날짜와 종료 날짜를 저장할 변수
     private Calendar startDateCalendar;
     private Calendar endDateCalendar;
@@ -37,100 +34,96 @@ public class household_Ledger extends AppCompatActivity {
         binding = ActivityHouseholdLedgerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        /*아이디어
-        1. 사용자가 조회하고자 하는 기간을 정해서 입력
-        2. 사용자가 입력해야 하는 정보를 모두 입력한 뒤에 버튼을 클릭
-        3. 별도 텍스트 뷰로 기록된 데이터 열람 가능
-        */
-
-        // 시작 날짜 설정
+        // --- 1. 시작 날짜 설정 ---
         binding.buttonStartDate.setOnClickListener(v -> {
             DatePickerFragment dialogFragment = new DatePickerFragment();
             dialogFragment.setOnDateSelectedListener((year, month, day) -> {
                 String selectedDate = year + "년 " + month + "월 " + day + "일";
                 binding.StartDate.setHint("선택한 날짜: " + selectedDate);
 
-                // 시작 날짜 저장
+                // 시작 날짜 객체 저장
                 startDateCalendar = Calendar.getInstance();
-                startDateCalendar.set(year, month - 1, day); // month는 0부터 시작
+                startDateCalendar.set(year, month - 1, day);
             });
-
             dialogFragment.show(getSupportFragmentManager(), "datePicker");
         });
 
-        // 종료 날짜 설정
+        // --- 2. 종료 날짜 설정 ---
         binding.buttonEndDate.setOnClickListener(v -> {
             DatePickerFragment dialogFragment = new DatePickerFragment();
             dialogFragment.setOnDateSelectedListener((year, month, day) -> {
-                Calendar endDateCalendar = Calendar.getInstance();
+                endDateCalendar = Calendar.getInstance();
                 endDateCalendar.set(year, month - 1, day);
 
-                // 시작 날짜와 비교
+                // 시작 날짜와 비교 검증
                 if (startDateCalendar != null && endDateCalendar.before(startDateCalendar)) {
                     Toast.makeText(this, "종료 날짜는 시작 날짜 이후여야 합니다.", Toast.LENGTH_SHORT).show();
+                    endDateCalendar = null; // 잘못된 선택 시 초기화
                 } else {
                     String selectedDate = year + "년 " + month + "월 " + day + "일";
                     binding.EndDate.setHint("선택한 날짜: " + selectedDate);
                 }
             });
-
             dialogFragment.show(getSupportFragmentManager(), "datePicker");
         });
 
-        // 초기화 기능
+        // --- 3. 초기화 기능 ---
         binding.buttonReset.setOnClickListener(v -> {
             binding.StartDate.setHint("xx-xxxx-xx");
             binding.EndDate.setHint("xx-xxxx-xx");
+            startDateCalendar = null;
+            endDateCalendar = null;
             Log.d("Reset", "날짜 초기화 완료");
         });
 
-        // 조회 기능
+        // --- 4. 조회 기능 (최종 수정본: 결과 화면으로 이동) ---
         binding.buttonSearch.setOnClickListener(v -> {
-            String startDate = null;
-            String endDate = null;
-        });
-/*
-        // 메인 페이지로 돌아가기
-        binding.buttonOut.setOnClickListener(v -> {
-            Intent intent = new Intent(household_Ledger.this, MainActivity.class);
+            String startHint = binding.StartDate.getHint().toString();
+            String endHint = binding.EndDate.getHint().toString();
+
+            // 날짜 선택 여부 확인
+            if (startHint.contains("xx") || endHint.contains("xx")) {
+                Toast.makeText(this, "조회 기간을 모두 설정해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 문구에서 실제 날짜 정보만 추출
+            String start = startHint.replace("선택한 날짜: ", "");
+            String end = endHint.replace("선택한 날짜: ", "");
+
+            // 결과 화면(LedgerResultActivity)으로 인텐트 전달 및 이동
+            Intent intent = new Intent(household_Ledger.this, LedgerResultActivity.class);
+            intent.putExtra("start_date", start);
+            intent.putExtra("end_date", end);
             startActivity(intent);
         });
-*/
-        // --- 하단 네비게이션 바 설정 ---
 
-        // 1. 현재 탭을 '가계부'로 활성화
+        // --- 5. 하단 네비게이션 바 설정 ---
         binding.bottomNavigation.setSelectedItemId(R.id.nav_ledger);
-
-        // 2. 클릭 리스너 설정
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             Intent intent = null;
 
             if (id == R.id.nav_ledger) {
-                return true; // 현재 화면이므로 아무것도 안 함
-            }
-            else if (id == R.id.nav_shopping) {
-                // 상품목록으로 이동
+                return true;
+            } else if (id == R.id.nav_shopping) {
                 intent = new Intent(this, Customer.class);
-            }
-            else if (id == R.id.nav_cart) {
-                // 장바구니로 이동
+            } else if (id == R.id.nav_cart) {
                 intent = new Intent(this, ShoppingBasket.class);
-            }
-            else if (id == R.id.nav_my_info) {
-                // 내 정보로 이동
+            } else if (id == R.id.nav_my_info) {
                 intent = new Intent(this, MyInfo.class);
             }
 
             if (intent != null) {
                 startActivity(intent);
-                overridePendingTransition(0, 0); // 애니메이션 제거
-                finish(); // 현재 화면 종료
+                overridePendingTransition(0, 0);
+                finish();
                 return true;
             }
             return false;
         });
 
+        // 시스템 바Insets 설정 (하단 여백 0 유지)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
