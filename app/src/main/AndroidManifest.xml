@@ -16,6 +16,11 @@
             android:theme="@style/Theme.ManagementApp"
             tools:targetApi="31">
         <activity
+                android:name=".management.Suggest$UnregistedProduct"
+                android:exported="false"
+                android:label="@string/title_activity_unregisted_product"
+                android:theme="@style/Theme.ManagementApp"/>
+        <activity
                 android:name=".management.Change"
                 android:exported="false"/>
         <activity
