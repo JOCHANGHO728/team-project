@@ -14,6 +14,7 @@ import com.example.customerapp.DataModel.ApiResponse;
 import com.example.customerapp.DataModel.CartManager;
 import com.example.customerapp.DataModel.LoginRequest;
 import com.example.customerapp.DataModel.RetrofitClient;
+import com.example.customerapp.Customer.Customer;
 import com.example.customerapp.databinding.ActivityLoginBinding;
 
 import retrofit2.Call;
@@ -54,7 +55,7 @@ public class Login extends AppCompatActivity {
                                     // 로그인 성공 - userId 저장
                                     CartManager.getInstance().setLoggedInUserId(uId);
                                     Toast.makeText(Login.this, "로그인 성공!", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(Login.this, MainActivity.class);
+                                    Intent intent = new Intent(Login.this, Customer.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
                                 } else {

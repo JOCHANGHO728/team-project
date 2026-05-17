@@ -15,10 +15,20 @@
 
         <activity
             android:name=".Customer.MyInfo"
-            android:exported="true"> <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+            android:exported="false" />
+
+        <activity
+            android:name=".Login"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -41,20 +51,13 @@
             android:name=".SignUp"
             android:exported="false" />
         <activity
-            android:name=".Login"
-            android:exported="false" />
-        <activity
             android:name=".Customer.Shopping.Category"
             android:exported="false" />
         <activity
             android:name=".Customer.Shopping.Shopping"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-        <activity
             android:name=".Customer.Household_Ledger.LedgerResultActivity"
             android:exported="false" />
-
     </application>
 </manifest>

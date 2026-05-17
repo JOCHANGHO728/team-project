@@ -1,13 +1,14 @@
 package com.example.customerapp.DataModel;
 
 import java.util.List;
+import java.util.Map;
 import retrofit2.Call;
 import retrofit2.http.*;
 
 public interface ApiService {
     // 회원가입: POST /api/v1/users/signup
     @POST("api/v1/users/signup")
-    Call<ApiResponse<String>> signup(@Body SignUpRequest request);
+    Call<ApiResponse<String>> signup(@Body Map<String, String> request);
 
     // 로그인: POST /api/v1/users/login
     @POST("api/v1/users/login")

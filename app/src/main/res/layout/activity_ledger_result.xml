@@ -40,16 +40,53 @@
             android:contentDescription="뒤로가기" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tv_selected_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:text="조회 날짜"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_top_bar" />
+
+    <TextView
+        android:id="@+id/tv_selected_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
+        android:text="-"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_selected_date_label" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_ledger_result"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@id/btn_close"
-        app:layout_constraintTop_toBottomOf="@id/layout_top_bar"
-        tools:listitem="@android:layout/simple_list_item_2" />
+        app:layout_constraintTop_toBottomOf="@id/tv_selected_date"
+        tools:listitem="@layout/item_ledger_receipt" />
+
+    <TextView
+        android:id="@+id/tv_empty_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        app:layout_constraintTop_toTopOf="@id/rv_ledger_result"
+        app:layout_constraintBottom_toBottomOf="@id/rv_ledger_result"
+        app:layout_constraintStart_toStartOf="@id/rv_ledger_result"
+        app:layout_constraintEnd_toEndOf="@id/rv_ledger_result"
+        tools:text="해당 날짜의 구매 내역이 없습니다." />
 
     <Button
         android:id="@+id/btn_close"

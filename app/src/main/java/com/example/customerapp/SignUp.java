@@ -11,8 +11,10 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.customerapp.DataModel.ApiResponse;
 import com.example.customerapp.DataModel.RetrofitClient;
-import com.example.customerapp.DataModel.SignUpRequest;
 import com.example.customerapp.databinding.ActivitySignUpBinding;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,7 +52,12 @@ public class SignUp extends AppCompatActivity {
                 return;
             }
 
-            SignUpRequest request = new SignUpRequest(uId, uPassword, uName, uNum);
+            Map<String, String> request = new HashMap<>();
+            request.put("login_id", uId);
+            request.put("password", uPassword);
+            request.put("name", uName);
+            request.put("p_number", uNum);
+
             RetrofitClient.getInstance().getApiService().signup(request)
                     .enqueue(new Callback<ApiResponse<String>>() {
                         @Override
