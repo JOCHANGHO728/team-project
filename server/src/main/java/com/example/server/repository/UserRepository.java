@@ -1,27 +1,16 @@
-package com.example.server.repository;  // 패키지 선언
-import com.example.server.dto.UserDto;  // 이게 있어야 함
+package com.example.server.repository;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
+import com.example.server.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-@Repository
-public class UserRepository {
+import java.util.Optional;
 
-    private final JdbcTemplate jdbcTemplate;
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    public UserRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    // JPA의 이름 인식 오류를 방지하기 위해 직접 쿼리를 지정합니다.
+    @Query("SELECT u FROM User u WHERE u.uId = :uId")
+    Optional<User> findByUId(@Param("uId") String uId);
 
-    // 1. 회원가입 (userdb 추가) - 백틱(`)을 추가하여 문법 에러 방지
-    public int insertUser(UserDto user) {
-        String sql = "INSERT INTO usersdb (`login_id`, `password`, `name`, `p_number`) VALUES (?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, user.getLoginId(), user.getPassword(), user.getName(), user.getPNumber());
-    }
-
-    // 2. 회원탈퇴 (userdb 삭제)
-    public int deleteUser(Long id) {
-        String sql = "DELETE FROM usersdb WHERE id = ?";
-        return jdbcTemplate.update(sql, id);
-    }
 }
