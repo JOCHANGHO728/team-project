@@ -24,6 +24,10 @@ public class ProductService {
         return productRepository.searchByName(keyword);
     }
 
+    public List<Product> getProductsByCategory(String category) {
+        return productRepository.findByCategory(category);
+    }
+
     @Transactional
     public void createProduct(ProductCreateDto request) {
         Product product = new Product();

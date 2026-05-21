@@ -47,7 +47,7 @@ public class OrderService {
                 throw new IllegalArgumentException("주문 수량은 1 이상이어야 합니다.");
             }
 
-            Product product = productRepository.findById(itemDto.getPId())
+            Product product = productRepository.findByIdForUpdate(itemDto.getPId())
                     .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. 상품 번호: " + itemDto.getPId()));
 
             if (product.getPQuantity() < itemDto.getQuantity()) {

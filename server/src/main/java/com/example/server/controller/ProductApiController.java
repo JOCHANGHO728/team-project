@@ -16,16 +16,20 @@ public class ProductApiController {
 
     private final ProductService productService;
 
+    @GetMapping
+    public ApiResponse<List<ProductResponseDto>> getProductsByCategory(@RequestParam("category") String category) {
+        List<ProductResponseDto> products = productService.getProductsByCategory(category).stream()
+                .map(ProductResponseDto::new)
+                .collect(Collectors.toList());
+        return ApiResponse.success("카테고리 상품 조회 성공", products);
+    }
+
     // 이름으로 제품 검색하는 컨트롤러
     @GetMapping("/search")
     public ApiResponse<List<ProductResponseDto>> searchProduct(@RequestParam("keyword") String keyword) {
-        try {
-            List<ProductResponseDto> products = productService.searchProductsByName(keyword).stream()
-                    .map(ProductResponseDto::new)
-                    .collect(Collectors.toList());
-            return ApiResponse.success("상품 검색 성공", products);
-        } catch (Exception e) {
-            return ApiResponse.fail(e.getMessage());
-        }
+        List<ProductResponseDto> products = productService.searchProductsByName(keyword).stream()
+                .map(ProductResponseDto::new)
+                .collect(Collectors.toList());
+        return ApiResponse.success("상품 검색 성공", products);
     }
 }

@@ -15,11 +15,7 @@ public class OrderApiController {
 
     @PostMapping
     public ApiResponse<Void> createOrder(@RequestBody OrderCreateDto request) {
-        try {
-            orderService.createOrder(request);
-            return ApiResponse.success("주문이 성공적으로 완료되었습니다.", null);
-        } catch (IllegalArgumentException e) {
-            return ApiResponse.fail(e.getMessage());
-        }
+        orderService.createOrder(request);
+        return ApiResponse.success("주문이 성공적으로 완료되었습니다.", null);
     }
 }

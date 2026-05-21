@@ -14,8 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-    // 수정: 비밀번호 평문 저장/비교 → BCrypt 해시로 변경
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public String login(UserLoginDto request) {
         User user = userRepository.findByUId(request.getUId())
