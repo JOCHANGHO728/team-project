@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA"
+    tools:context=".management.search.Update">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.08" />
+
+    <TextView
+        android:id="@+id/tv_update_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="상품 정보 수정"
+        android:textColor="#111111"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:letterSpacing="-0.02"
+        app:layout_constraintTop_toTopOf="@id/guideline_top"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_button_container"
+        app:layout_constraintTop_toBottomOf="@id/tv_update_title">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="24dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="상품명" android:textColor="#111111" android:textStyle="bold" android:textSize="14sp" android:layout_marginBottom="8dp"/>
+                <EditText
+                    android:id="@+id/editName"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/edittext_border"
+                    android:hint="상품 이름을 입력하세요"
+                    android:inputType="text"
+                    android:paddingHorizontal="16dp"
+                    android:textSize="16sp"
+                    android:textColor="#111111"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="가격 정보 입력" android:textColor="#111111" android:textStyle="bold" android:textSize="14sp" android:layout_marginTop="20dp" android:layout_marginBottom="8dp"/>
+                <EditText
+                    android:id="@+id/editPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/edittext_border"
+                    android:hint="수정할 가격 입력"
+                    android:inputType="number"
+                    android:paddingHorizontal="16dp"
+                    android:textSize="16sp"
+                    android:textColor="#111111" />
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="수량 정보 입력" android:textColor="#111111" android:textStyle="bold" android:textSize="14sp" android:layout_marginTop="20dp" android:layout_marginBottom="8dp"/>
+                <EditText
+                    android:id="@+id/editQuantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/edittext_border"
+                    android:hint="수정할 재고 수량 입력"
+                    android:inputType="number"
+                    android:paddingHorizontal="16dp"
+                    android:textSize="16sp"
+                    android:textColor="#111111" />
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="카테고리" android:textColor="#111111" android:textStyle="bold" android:textSize="14sp" android:layout_marginTop="20dp" android:layout_marginBottom="8dp"/>
+                <EditText
+                    android:id="@+id/editCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/edittext_border"
+                    android:hint="카테고리 분류 입력"
+                    android:inputType="text"
+                    android:paddingHorizontal="16dp"
+                    android:textSize="16sp"
+                    android:textColor="#111111" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottom_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="수정 사항 저장"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:backgroundTint="#111111"
+            app:cornerRadius="16dp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,97 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F8F9FA"
     tools:context=".management.Management">
 
-    <android.widget.Button
-        android:id="@+id/blue_button"
-        android:layout_width="match_parent"
-        android:layout_height="75sp"
-        android:background="#6090ED"
-        android:text="매장 관리"
-        app:layout_constraintBaseline_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="73dp" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/innerLayout"
-        android:layout_width="375sp"
-        android:layout_height="525sp"
-        android:padding="16dp"
-        android:background="@drawable/border_background"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/blue_button"
-        android:layout_marginTop="24dp"
-        >
-
-        <android.widget.Button
-            android:id="@+id/search"
-            android:layout_width="300sp"
-            android:layout_height="80sp"
-            android:text="매장 상품조회"
-            android:textSize="15sp"
-            android:background="@drawable/button_backgroud"
-            app:layout_constraintTop_toTopOf="parent"
+    <TextView
+            android:id="@+id/tv_menu_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="매장 관리"
+            android:textColor="#111111"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:letterSpacing="-0.02"
+            app:layout_constraintTop_toTopOf="@id/guideline_top"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            >
-        </android.widget.Button>
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <android.widget.Button
-            android:id="@+id/change"
-            android:layout_width="300sp"
-            android:layout_height="80sp"
-            android:text="매장 상품 변경"
-            android:textSize="15sp"
-            android:background="@drawable/button_backgroud"
-            android:layout_marginTop="20sp"
-            app:layout_constraintTop_toBottomOf="@+id/search"
+    <androidx.cardview.widget.CardView
+            android:id="@+id/card_menu_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="32dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="8dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_menu_title"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <android.widget.Button
-            android:id="@+id/suggest"
-            android:layout_width="300sp"
-            android:layout_height="80sp"
-            android:text="매장 상품 발주 추천(ai 기능)"
-            android:textSize="15sp"
-            android:background="@drawable/button_backgroud"
-            android:layout_marginTop="20sp"
-            app:layout_constraintTop_toBottomOf="@+id/change"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
 
-        <android.widget.Button
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/search"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:text="매장 상품 조회"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="#111111"
+                    app:cornerRadius="16dp"
+                    app:icon="@android:drawable/ic_menu_search"
+                    app:iconGravity="textStart"
+                    app:elevation="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/change"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="12dp"
+                    android:text="매장 상품 변경"
+                    android:textColor="#111111"
+                    android:textSize="16sp"
+                    app:cornerRadius="16dp"
+                    app:strokeColor="#111111"
+                    app:strokeWidth="1dp"
+                    app:icon="@android:drawable/ic_menu_edit"
+                    app:iconGravity="textStart"
+                    app:iconTint="#111111" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/unregistered_scan"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="12dp"
+                    android:text="상품 등록"
+                    android:textColor="#111111"
+                    android:textSize="16sp"
+                    app:cornerRadius="16dp"
+                    app:strokeColor="#111111"
+                    app:strokeWidth="1dp"
+                    app:icon="@android:drawable/ic_menu_view"
+                    app:iconGravity="textStart"
+                    app:iconTint="#111111" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/suggest"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="12dp"
+                    android:text="매장 상품 발주 추천 (AI)"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="#6200EE"
+                    app:cornerRadius="16dp"
+                    app:icon="@android:drawable/ic_dialog_info"
+                    app:iconGravity="textStart"
+                    app:elevation="2dp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.button.MaterialButton
             android:id="@+id/logout"
-            android:layout_width="300sp"
-            android:layout_height="80sp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
             android:text="로그아웃"
-            android:textSize="15sp"
-            android:background="@drawable/button_backgroud"
-            android:layout_marginTop="20sp"
-            app:layout_constraintTop_toBottomOf="@+id/suggest"
+            android:textColor="#FF5252"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <android.widget.Button
-        android:id="@+id/blue_button2"
-        android:layout_width="match_parent"
-        android:layout_height="75sp"
-        android:background="#6090ED"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+            app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,6 @@ package com.example.managementapp.management;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -12,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.managementapp.MainActivity;
 import com.example.managementapp.R;
 import com.example.managementapp.databinding.ActivityManagementBinding;
+import com.example.managementapp.management.search.Search;
 
 public class Management extends AppCompatActivity {
     private ActivityManagementBinding binding;
@@ -30,7 +30,8 @@ public class Management extends AppCompatActivity {
 
         // 데이터베이스 수정 및 삭제
         binding.change.setOnClickListener(v -> {
-
+            Intent intent = new Intent(Management.this, Change.class);
+            startActivity(intent);
         });
 
         // 데이터 베이스 추천(ai 기능)

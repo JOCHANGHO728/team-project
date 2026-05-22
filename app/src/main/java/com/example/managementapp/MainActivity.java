@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // 로그인 버튼(로그인 페이지로 이동함)
-        binding.login.setOnClickListener(v -> {
+        binding.btnLogin.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, Login.class);
             startActivity(intent);
         });
