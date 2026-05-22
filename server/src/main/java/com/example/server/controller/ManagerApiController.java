@@ -6,10 +6,12 @@ import com.example.server.dto.ManagerLoginDto;
 import com.example.server.dto.ProductCreateDto;
 import com.example.server.dto.ProductResponseDto;
 import com.example.server.dto.ProductUpdateDto;
+import com.example.server.dto.PurchaseHistoryDto;
 import com.example.server.entity.Manager;
 import com.example.server.security.ManagerTokenService;
 import com.example.server.service.ManagerService;
 import com.example.server.service.ProductService;
+import com.example.server.service.PurchaseHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,7 @@ public class ManagerApiController {
     private final ManagerService managerService;
     private final ManagerTokenService managerTokenService;
     private final ProductService productService;
+    private final PurchaseHistoryService purchaseHistoryService;
 
     // 1. 관리자 로그인
     @PostMapping("/login")
@@ -76,5 +79,12 @@ public class ManagerApiController {
                 .map(ProductResponseDto::new)
                 .collect(Collectors.toList());
         return ApiResponse.success("상품 검색 성공", products);
+    }
+
+    // 7. 전체 회원의 구매 내역 조회 (보안 이전 완료)
+    @GetMapping("/purchase-history")
+    public ApiResponse<List<PurchaseHistoryDto>> getAllPurchaseHistories() {
+        List<PurchaseHistoryDto> historyList = purchaseHistoryService.getAllPurchaseHistories();
+        return ApiResponse.success("전체 구매 내역 조회 성공", historyList);
     }
 }

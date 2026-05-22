@@ -16,7 +16,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public String login(UserLoginDto request) {
+    public User login(UserLoginDto request) {
         User user = userRepository.findByUId(request.getUId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고객 아이디입니다."));
 
@@ -24,7 +24,7 @@ public class UserService {
         if (!passwordEncoder.matches(request.getUPassword(), user.getUPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        return user.getUName() + "님, 환영합니다!";
+        return user;
     }
 
     @Transactional

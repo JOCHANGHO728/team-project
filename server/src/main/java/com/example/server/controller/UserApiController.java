@@ -1,8 +1,11 @@
 package com.example.server.controller;
 
 import com.example.server.common.ApiResponse;
+import com.example.server.dto.UserAuthResponse;
 import com.example.server.dto.UserLoginDto;
 import com.example.server.dto.UserSignupDto;
+import com.example.server.entity.User;
+import com.example.server.security.UserTokenService;
 import com.example.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +16,20 @@ import org.springframework.web.bind.annotation.*;
 public class UserApiController {
 
     private final UserService userService;
+    private final UserTokenService userTokenService;
 
     @PostMapping("/login")
-    public ApiResponse<String> login(@RequestBody UserLoginDto request) {
-        String message = userService.login(request);
-        return ApiResponse.success("로그인 성공", message);
+    public ApiResponse<UserAuthResponse> login(@RequestBody UserLoginDto request) {
+        User user = userService.login(request);
+        UserTokenService.IssuedToken issuedToken = userTokenService.issueToken(user.getUId());
+
+        UserAuthResponse response = new UserAuthResponse(
+                user.getUId(),
+                user.getUName(),
+                issuedToken.accessToken(),
+                issuedToken.expiresAt()
+        );
+        return ApiResponse.success("로그인 성공", response);
     }
 
     @PostMapping("/signup")
