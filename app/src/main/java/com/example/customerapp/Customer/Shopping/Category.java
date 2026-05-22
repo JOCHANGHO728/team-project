@@ -1,4 +1,4 @@
-package com.example.customerapp.Customer.Shopping;
+/*package com.example.customerapp.Customer.Shopping;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -49,28 +49,8 @@ public class Category extends AppCompatActivity {
         });
     }
 
-    // 테스트용 하드 코딩 데이터
-    private List<Product> getProductsByCategory(String category) {
-        List<Product> list = new ArrayList<>();
-        switch (category) {
-            case "가정용품":
-                list.add(new Product("티셔츠", 15000));
-                list.add(new Product("청바지", 30000));
-                break;
-            case "전자제품":
-                list.add(new Product("노트북", 1200000));
-                list.add(new Product("스마트폰", 900000));
-                break;
-            case "식품":
-                list.add(new Product("사과", 3000));
-                list.add(new Product("우유", 2000));
-                break;
-        }
-        return list;
-    }
 }
 
-/*
 // CategoryActivity.java
 public class CategoryActivity extends AppCompatActivity {
     private RecyclerView recyclerView;

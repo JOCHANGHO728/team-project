@@ -45,6 +45,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:paddingHorizontal="16dp"
+        android:contentDescription="장바구니 목록"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/layout_bottom_payment"
         app:layout_constraintTop_toBottomOf="@id/layout_header"

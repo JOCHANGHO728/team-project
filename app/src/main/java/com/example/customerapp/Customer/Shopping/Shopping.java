@@ -21,7 +21,7 @@ public class Shopping extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // 카테고리 이벤트 리스너
-        binding.snack.setOnClickListener(v -> openCategory("과자"));
+        /*binding.snack.setOnClickListener(v -> openCategory("과자"));
         binding.drink.setOnClickListener(v -> openCategory("음료"));
         binding.noodle.setOnClickListener(v -> openCategory("면류"));
         binding.dairy.setOnClickListener(v -> openCategory("유제품"));
@@ -29,7 +29,7 @@ public class Shopping extends AppCompatActivity {
         binding.fresh.setOnClickListener(v -> openCategory("신선식품"));
         binding.frozen.setOnClickListener(v -> openCategory("냉동식품"));
         binding.household.setOnClickListener(v -> openCategory("가정용품"));
-        binding.hygiene.setOnClickListener(v -> openCategory("위생용품"));
+        binding.hygiene.setOnClickListener(v -> openCategory("위생용품"));*/
 
         // 장바구니 조회
         binding.search.setOnClickListener(v -> {
@@ -56,9 +56,9 @@ public class Shopping extends AppCompatActivity {
     }
 
     // 이벤트리스너 함수
-    private void openCategory(String category) {
+    /*private void openCategory(String category) {
         Intent intent = new Intent(Shopping.this, Category.class);
         intent.putExtra("category", category);
         startActivity(intent);
-    }
+    }*/
 }

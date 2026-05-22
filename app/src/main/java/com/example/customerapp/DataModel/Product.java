@@ -1,20 +1,45 @@
 package com.example.customerapp.DataModel;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Product {
-    // 데이터 베이스 테이블 참조
-    //p_id	p_name	p_price	p_quantity	b_key	category
-    String id;
-    String name;
-    int price;
-    int quantity;
-    int b_key;
-    int category;
+    @SerializedName("pId")
+    private Long pId;
 
-    public Product(String name, int price) {
-        this.name = name;
-        this.price = price;
+    @SerializedName("pName")
+    private String pName;
+
+    @SerializedName("pPrice")
+    private int pPrice;
+
+    @SerializedName("pQuantity")
+    private int pQuantity;
+
+    @SerializedName("bKey")
+    private String bKey;
+
+    @SerializedName("category")
+    private String category;
+
+    public Long getPId() { return pId; }
+    public String getPName() { return pName; }
+    public int getPPrice() { return pPrice; }
+    public int getPQuantity() { return pQuantity; }
+    public String getBKey() { return bKey; }
+    public String getCategory() { return category; }
+
+    // 장바구니용 수량 (서버 필드와 별개)
+    private int cartQuantity = 1;
+    public int getCartQuantity() { return cartQuantity; }
+    public void setCartQuantity(int qty) { cartQuantity = qty; }
+
+
+    // 상품 이미지 초기화
+    public String getImageUrl() {
+        // 서버에서 이미지 필드가 추가되면 여기에 매핑
+        // 예: return this.imageUrl;
+
+        // 현재는 테스트용 placeholder 이미지 사용
+        return "https://via.placeholder.com/150?text=" + pName;
     }
-
-    public String getName() { return name; }
-    public int getPrice() { return price; }
 }

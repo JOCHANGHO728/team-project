@@ -17,6 +17,13 @@ import com.example.customerapp.Customer.Shopping.ProductAdapter;
 import com.example.customerapp.DataModel.Product;
 import com.example.customerapp.R;
 
+import com.example.customerapp.Customer.Shoppingbasket.ShoppingBasket;
+import com.example.customerapp.Customer.Household_Ledger.household_Ledger;
+import com.example.customerapp.Customer.MyInfo;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.content.Intent; // Intent 사용을 위해 필요
+import com.google.android.material.bottomnavigation.BottomNavigationView; // BottomNavigationView 사용을 위해 필요
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +71,8 @@ public class Customer extends AppCompatActivity {
                 return true;
             }
 
+
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 filterProducts(newText); // 글자 입력할 때마다 실시간 필터링
@@ -73,6 +82,38 @@ public class Customer extends AppCompatActivity {
 
         // 5. 초기 화면 설정
         updateProductList(currentCategory);
+
+        // 6. 하단 네비게이션 설정 (추가되는 부분)
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+
+        // 현재 화면인 '상품목록' 아이콘을 활성화 상태로 표시
+        bottomNavigation.setSelectedItemId(R.id.nav_shopping);
+
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            Intent intent = null;
+
+            if (id == R.id.nav_shopping) {
+                return true; // 현재 화면이므로 아무것도 하지 않음
+            }
+            else if (id == R.id.nav_cart) {
+                intent = new Intent(this, ShoppingBasket.class);
+            }
+            else if (id == R.id.nav_ledger) {
+                intent = new Intent(this, household_Ledger.class);
+            }
+            else if (id == R.id.nav_my_info) {
+                intent = new Intent(this, MyInfo.class);
+            }
+
+            if (intent != null) {
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            }
+            return false;
+        });
     }
 
     // 상품 리스트 업데이트 (전체 출력)
@@ -88,7 +129,7 @@ public class Customer extends AppCompatActivity {
         List<Product> filteredList = new ArrayList<>();
 
         for (Product product : allProducts) {
-            if (product.getName().toLowerCase().contains(query.toLowerCase())) {
+            if (product.getPName().toLowerCase().contains(query.toLowerCase())) {
                 filteredList.add(product);
             }
         }
@@ -96,44 +137,7 @@ public class Customer extends AppCompatActivity {
         rvProductList.setAdapter(productAdapter);
     }
 
-    // 하드코딩 데이터 (기존 Category.java 로직 통합)
-    private List<Product> getProductsByCategory(String category) {
-        List<Product> list = new ArrayList<>();
-        switch (category) {
-            case "식품":
-                list.add(new Product("사과", 3000));
-                list.add(new Product("우유", 2000));
-                list.add(new Product("사과", 3000));
-                list.add(new Product("우유", 2000));
-                list.add(new Product("사과", 3000));
-                list.add(new Product("우유", 2000));
-                list.add(new Product("사과", 3000));
-                list.add(new Product("우유", 2000));
-                list.add(new Product("사과", 3000));
-                list.add(new Product("우유", 2000));
-                list.add(new Product("사과", 3000));
-                list.add(new Product("우유", 2000));
-                list.add(new Product("사과", 3000));
-                list.add(new Product("asd", 2000));
-                break;
-            case "가정용품":
-                list.add(new Product("티셔츠", 15000));
-                list.add(new Product("청바지", 30000));
-                break;
-            case "전자제품":
-                list.add(new Product("노트북", 1200000));
-                list.add(new Product("스마트폰", 900000));
-                break;
-            case "과자":
-                list.add(new Product("감자칩", 1500));
-                list.add(new Product("초콜릿", 2000));
-                break;
-            default:
-                list.add(new Product(category + " 상품", 10000));
-                break;
-        }
-        return list;
-    }
+
 
     // --- 카테고리 어댑터 (이미지 제외 및 선택 강조) ---
     private class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
@@ -188,5 +192,9 @@ public class Customer extends AppCompatActivity {
                 tvName = itemView.findViewById(R.id.tv_category_name);
             }
         }
+    }
+    // <--- 여기에 메서드를 복사해서 넣으세요!
+    private List<Product> getProductsByCategory(String categoryName) {
+        return new ArrayList<>();
     }
 }
