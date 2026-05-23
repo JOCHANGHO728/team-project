@@ -32,6 +32,9 @@
             android:name=".Customer.Customer"
             android:exported="false" />
         <activity
+            android:name=".Customer.MyInfo"
+            android:exported="false" />
+        <activity
             android:name=".SignUp"
             android:exported="false" />
         <activity

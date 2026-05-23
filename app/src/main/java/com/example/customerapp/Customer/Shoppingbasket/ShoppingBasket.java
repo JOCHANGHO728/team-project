@@ -158,17 +158,17 @@ public class ShoppingBasket extends AppCompatActivity {
         });
 
         // 하단 네비게이션 바 설정
-        binding.bottomNavigation.setSelectedItemId(R.id.nav_ledger);
+        binding.bottomNavigation.setSelectedItemId(R.id.nav_cart);
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             Intent intent = null;
 
-            if (id == R.id.nav_ledger) {
-                intent = new Intent(this, household_Ledger.class);
-            } else if (id == R.id.nav_shopping) {
+            if (id == R.id.nav_cart) {
                 return true;
-            } else if (id == R.id.nav_cart) {
-                intent = new Intent(this, ShoppingBasket.class);
+            } else if (id == R.id.nav_shopping) {
+                intent = new Intent(this, Customer.class);
+            } else if (id == R.id.nav_ledger) {
+                intent = new Intent(this, household_Ledger.class);
             } else if (id == R.id.nav_my_info) {
                 intent = new Intent(this, MyInfo.class);
             }
