@@ -3,19 +3,19 @@ package com.example.customerapp.DataModel;
 import com.google.gson.annotations.SerializedName;
 
 public class Product {
-    @SerializedName("pId")
+    @SerializedName(value = "pId", alternate = {"PId", "pid"})
     private Long pId;
 
-    @SerializedName("pName")
+    @SerializedName(value = "pName", alternate = {"PName", "pname"})
     private String pName;
 
-    @SerializedName("pPrice")
+    @SerializedName(value = "pPrice", alternate = {"PPrice", "pprice"})
     private int pPrice;
 
-    @SerializedName("pQuantity")
+    @SerializedName(value = "pQuantity", alternate = {"PQuantity", "pquantity"})
     private int pQuantity;
 
-    @SerializedName("bKey")
+    @SerializedName(value = "bKey", alternate = {"BKey", "bkey"})
     private String bKey;
 
     @SerializedName("category")

@@ -1,5 +1,6 @@
 package com.example.customerapp.Customer;
 
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -7,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -14,26 +17,39 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.customerapp.Customer.Shopping.ProductAdapter;
+import com.example.customerapp.DataModel.ApiResponse;
+import com.example.customerapp.DataModel.CartManager;
 import com.example.customerapp.DataModel.Product;
+import com.example.customerapp.DataModel.RetrofitClient;
 import com.example.customerapp.R;
 
 import com.example.customerapp.Customer.Shoppingbasket.ShoppingBasket;
 import com.example.customerapp.Customer.Household_Ledger.household_Ledger;
 import com.example.customerapp.Customer.MyInfo;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.content.Intent; // Intent 사용을 위해 필요
 import com.google.android.material.bottomnavigation.BottomNavigationView; // BottomNavigationView 사용을 위해 필요
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Customer extends AppCompatActivity {
 
     private RecyclerView rvCategory, rvProductList;
     private ProductAdapter productAdapter;
     private CategoryAdapter categoryAdapter;
-    private String currentCategory = "식품"; // 현재 선택된 카테고리 추적
+    private String currentCategory = "";
+    private SearchView svProductSearch;
+    private final List<Product> allProducts = new ArrayList<>();
+    private final List<Product> currentCategoryProducts = new ArrayList<>();
+    private final List<Product> currentDisplayProducts = new ArrayList<>();
 
     public interface OnCategoryClickListener {
         void onCategoryClick(String categoryName);
@@ -47,23 +63,22 @@ public class Customer extends AppCompatActivity {
         // 1. 뷰 초기화
         rvCategory = findViewById(R.id.rv_category);
         rvProductList = findViewById(R.id.rv_product_list);
-        SearchView svProductSearch = findViewById(R.id.sv_product_search);
+        svProductSearch = findViewById(R.id.sv_product_search);
 
         rvCategory.setLayoutManager(new LinearLayoutManager(this));
         rvProductList.setLayoutManager(new LinearLayoutManager(this));
 
-        // 2. 카테고리 목록 데이터 (이미지 기준 항목들)
-        List<String> categories = Arrays.asList("식품", "가정용품", "전자제품", "과자", "음료", "의류");
-
-        // 3. 카테고리 어댑터 설정
-        categoryAdapter = new CategoryAdapter(categories, categoryName -> {
-            currentCategory = categoryName; // 카테고리 변경 시 저장
-            updateProductList(categoryName);
-            svProductSearch.setQuery("", false); // 카테고리 바꿀 때 검색창 초기화
+        // 2. 초기 어댑터 설정 (DB 로딩 후 교체)
+        categoryAdapter = new CategoryAdapter(new ArrayList<>(), categoryName -> {
+            currentCategory = categoryName;
+            svProductSearch.setQuery("", false);
+            loadProductsByCategory(categoryName);
         });
         rvCategory.setAdapter(categoryAdapter);
+        productAdapter = createProductAdapter(new ArrayList<>());
+        rvProductList.setAdapter(productAdapter);
 
-        // 4. 검색 기능 구현 (실시간 필터링)
+        // 3. 검색 기능 구현 (현재 카테고리 결과 내 필터)
         svProductSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -71,19 +86,17 @@ public class Customer extends AppCompatActivity {
                 return true;
             }
 
-
-
             @Override
             public boolean onQueryTextChange(String newText) {
-                filterProducts(newText); // 글자 입력할 때마다 실시간 필터링
+                filterProducts(newText);
                 return true;
             }
         });
 
-        // 5. 초기 화면 설정
-        updateProductList(currentCategory);
+        // 4. DB에서 카테고리/상품 로드
+        loadCategoriesFromServer();
 
-        // 6. 하단 네비게이션 설정 (추가되는 부분)
+        // 5. 하단 네비게이션 설정
         BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
 
         // 현재 화면인 '상품목록' 아이콘을 활성화 상태로 표시
@@ -116,24 +129,182 @@ public class Customer extends AppCompatActivity {
         });
     }
 
-    // 상품 리스트 업데이트 (전체 출력)
-    private void updateProductList(String categoryName) {
-        List<Product> productList = getProductsByCategory(categoryName);
-        productAdapter = new ProductAdapter(productList);
-        rvProductList.setAdapter(productAdapter);
+    private void loadCategoriesFromServer() {
+        RetrofitClient.getInstance().getApiService().searchProducts("")
+                .enqueue(new Callback<ApiResponse<List<Product>>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<List<Product>>> call, Response<ApiResponse<List<Product>>> response) {
+                        if (!response.isSuccessful() || response.body() == null || !response.body().isSuccess()) {
+                            Toast.makeText(Customer.this, "카테고리 조회 실패", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        List<Product> products = response.body().getData();
+                        if (products == null || products.isEmpty()) {
+                            Toast.makeText(Customer.this, "등록된 상품이 없습니다.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        allProducts.clear();
+                        allProducts.addAll(products);
+
+                        Set<String> categorySet = new LinkedHashSet<>();
+                        for (Product product : products) {
+                            String category = product.getCategory();
+                            if (category != null && !category.isBlank()) {
+                                categorySet.add(category);
+                            }
+                        }
+
+                        List<String> categories = new ArrayList<>(categorySet);
+                        if (categories.isEmpty()) {
+                            Toast.makeText(Customer.this, "카테고리 정보가 없습니다.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        categoryAdapter = new CategoryAdapter(categories, categoryName -> {
+                            currentCategory = categoryName;
+                            svProductSearch.setQuery("", false);
+                            loadProductsByCategory(categoryName);
+                        });
+                        rvCategory.setAdapter(categoryAdapter);
+
+                        currentCategory = categories.get(0);
+                        loadProductsByCategory(currentCategory);
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<List<Product>>> call, Throwable t) {
+                        Toast.makeText(Customer.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void loadProductsByCategory(String categoryName) {
+        RetrofitClient.getInstance().getApiService().getProductsByCategory(categoryName)
+                .enqueue(new Callback<ApiResponse<List<Product>>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<List<Product>>> call, Response<ApiResponse<List<Product>>> response) {
+                        if (!response.isSuccessful() || response.body() == null || !response.body().isSuccess()) {
+                            applyLocalCategoryFallback(categoryName);
+                            return;
+                        }
+
+                        List<Product> products = response.body().getData();
+                        currentCategoryProducts.clear();
+                        if (products != null) {
+                            currentCategoryProducts.addAll(products);
+                        }
+                        refreshDisplayProducts("");
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<List<Product>>> call, Throwable t) {
+                        applyLocalCategoryFallback(categoryName);
+                    }
+                });
+    }
+
+    private void applyLocalCategoryFallback(String categoryName) {
+        List<Product> filtered = new ArrayList<>();
+        for (Product product : allProducts) {
+            if (categoryName.equals(product.getCategory())) {
+                filtered.add(product);
+            }
+        }
+        currentCategoryProducts.clear();
+        currentCategoryProducts.addAll(filtered);
+        refreshDisplayProducts("");
     }
 
     // 검색어에 따른 상품 필터링 로직
     private void filterProducts(String query) {
-        List<Product> allProducts = getProductsByCategory(currentCategory);
-        List<Product> filteredList = new ArrayList<>();
+        String normalized = query == null ? "" : query.trim().toLowerCase();
+        refreshDisplayProducts(normalized);
+    }
 
-        for (Product product : allProducts) {
-            if (product.getPName().toLowerCase().contains(query.toLowerCase())) {
-                filteredList.add(product);
+    private ProductAdapter createProductAdapter(List<Product> products) {
+        return new ProductAdapter(
+                products,
+                product -> {
+                    CartManager.getInstance().addItem(product);
+                    Toast.makeText(this, "장바구니에 추가되었습니다.", Toast.LENGTH_SHORT).show();
+                },
+                this::showVariantPicker
+        );
+    }
+
+    private void showVariantPicker(Product selectedProduct) {
+        String baseName = normalizeProductBaseName(selectedProduct.getPName());
+        List<Product> sameNameProducts = new ArrayList<>();
+
+        for (Product product : currentCategoryProducts) {
+            if (normalizeProductBaseName(product.getPName()).equals(baseName)) {
+                sameNameProducts.add(product);
             }
         }
-        productAdapter = new ProductAdapter(filteredList);
+
+        if (sameNameProducts.size() <= 1) {
+            CartManager.getInstance().addItem(selectedProduct);
+            Toast.makeText(this, "장바구니에 추가되었습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_product_options, null, false);
+        TextView tvTitle = dialogView.findViewById(R.id.tv_option_title);
+        RecyclerView rvOptions = dialogView.findViewById(R.id.rv_option_list);
+
+        tvTitle.setText(baseName + " 옵션 선택");
+        rvOptions.setLayoutManager(new LinearLayoutManager(this));
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .create();
+
+        VariantOptionAdapter optionAdapter = new VariantOptionAdapter(sameNameProducts, product -> {
+            CartManager.getInstance().addItem(product);
+            Toast.makeText(this, product.getPName() + " 추가", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
+        rvOptions.setAdapter(optionAdapter);
+        dialog.show();
+    }
+
+    private String normalizeProductBaseName(String name) {
+        if (name == null) return "";
+        String normalized = name.trim();
+        normalized = normalized.replaceAll("\\(.*?\\)", "").trim();
+        normalized = normalized.replaceAll("(\\s+\\d+\\s*박스)$", "").trim();
+        normalized = normalized.replaceAll("(\\s+대용량|\\s+소용량|\\s+세트|\\s+묶음)$", "").trim();
+        return normalized;
+    }
+
+    private void refreshDisplayProducts(String normalizedQuery) {
+        Map<String, Product> baseProductMap = new LinkedHashMap<>();
+
+        for (Product product : currentCategoryProducts) {
+            String name = product.getPName();
+            if (name == null || name.isBlank()) continue;
+
+            if (!normalizedQuery.isEmpty() && !name.toLowerCase().contains(normalizedQuery)) {
+                continue;
+            }
+
+            String baseName = normalizeProductBaseName(name);
+            if (!baseProductMap.containsKey(baseName)) {
+                baseProductMap.put(baseName, product);
+            } else {
+                Product existing = baseProductMap.get(baseName);
+                if (existing != null && !existing.getPName().equals(baseName) && name.equals(baseName)) {
+                    baseProductMap.put(baseName, product);
+                }
+            }
+        }
+
+        currentDisplayProducts.clear();
+        currentDisplayProducts.addAll(baseProductMap.values());
+
+        productAdapter = createProductAdapter(new ArrayList<>(currentDisplayProducts));
         rvProductList.setAdapter(productAdapter);
     }
 
@@ -193,8 +364,48 @@ public class Customer extends AppCompatActivity {
             }
         }
     }
-    // <--- 여기에 메서드를 복사해서 넣으세요!
-    private List<Product> getProductsByCategory(String categoryName) {
-        return new ArrayList<>();
+
+    private static class VariantOptionAdapter extends RecyclerView.Adapter<VariantOptionAdapter.ViewHolder> {
+        interface OnVariantSelectListener {
+            void onSelect(Product product);
+        }
+
+        private final List<Product> options;
+        private final OnVariantSelectListener listener;
+
+        VariantOptionAdapter(List<Product> options, OnVariantSelectListener listener) {
+            this.options = options;
+            this.listener = listener;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_variant_option, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            Product product = options.get(position);
+            holder.tvName.setText(product.getPName());
+            holder.tvPrice.setText(product.getPPrice() + "원");
+            holder.itemView.setOnClickListener(v -> listener.onSelect(product));
+        }
+
+        @Override
+        public int getItemCount() {
+            return options.size();
+        }
+
+        static class ViewHolder extends RecyclerView.ViewHolder {
+            TextView tvName, tvPrice;
+
+            ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                tvName = itemView.findViewById(R.id.tv_option_name);
+                tvPrice = itemView.findViewById(R.id.tv_option_price);
+            }
+        }
     }
 }

@@ -13,9 +13,13 @@ public interface ApiService {
     @POST("api/v1/users/login")
     Call<ApiResponse<UserAuthResponse>> login(@Body LoginRequest request);
 
-    // 상품 검색 (카테고리별): GET /api/v1/products/search?keyword=과자
+    // 상품 검색: GET /api/v1/products/search?keyword=...
     @GET("api/v1/products/search")
     Call<ApiResponse<List<Product>>> searchProducts(@Query("keyword") String keyword);
+
+    // 카테고리별 상품 조회: GET /api/v1/products?category=...
+    @GET("api/v1/products")
+    Call<ApiResponse<List<Product>>> getProductsByCategory(@Query("category") String category);
 
     // 주문 생성: POST /api/v1/orders
     @POST("api/v1/orders")

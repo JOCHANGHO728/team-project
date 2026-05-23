@@ -18,6 +18,7 @@ import com.example.customerapp.Customer.Household_Ledger.household_Ledger;
 import com.example.customerapp.Customer.MyInfo;
 import com.example.customerapp.DataModel.ApiResponse;
 import com.example.customerapp.DataModel.ApiService;
+import com.example.customerapp.DataModel.CartManager;
 import com.example.customerapp.DataModel.Product;
 import com.example.customerapp.R;
 import com.example.customerapp.databinding.ActivityShoppingBasketBinding;
@@ -62,6 +63,7 @@ public class ShoppingBasket extends AppCompatActivity {
         cartAdapter = new CartAdapter();
         cartAdapter.setOnCartChangeListener(() -> updateTotalPrice());
         binding.rvCartList.setAdapter(cartAdapter);
+        syncCartFromManager();
 
         // 🔥 스캔 결과 런처
         barcodeLauncher = registerForActivityResult(
@@ -100,26 +102,11 @@ public class ShoppingBasket extends AppCompatActivity {
                                                     return;
                                                 }
 
-                                                // 🔥 기존 장바구니에 같은 상품이 있는지 확인
-                                                boolean exists = false;
-                                                for (CartItem item : cartItems) {
-                                                    if (item.getProduct().getPId().equals(product.getPId())) {
-                                                        // 이미 있는 상품이면 수량만 증가
-                                                        item.setQuantity(item.getQuantity() + qty);
-                                                        exists = true;
-                                                        break;
-                                                    }
+                                                for (int i = 0; i < qty; i++) {
+                                                    CartManager.getInstance().addItem(product);
                                                 }
 
-                                                // 🔥 장바구니에 없는 상품이면 새로 추가
-                                                if (!exists) {
-                                                    product.setCartQuantity(qty);
-                                                    cartItems.add(new CartItem(product, qty));
-                                                }
-
-                                                // UI 업데이트
-                                                cartAdapter.setData(cartItems);
-                                                updateTotalPrice();
+                                                syncCartFromManager();
 
                                             } else {
                                                 Toast.makeText(
@@ -149,6 +136,13 @@ public class ShoppingBasket extends AppCompatActivity {
         binding.btnBarcodeScan.setOnClickListener(v -> {
             Intent intent = new Intent(ShoppingBasket.this, BarcodeScan.class);
             barcodeLauncher.launch(intent);
+        });
+
+        // 결제 버튼
+        binding.btnOrder.setOnClickListener(v -> {
+            Intent intent = new Intent(ShoppingBasket.this, Payment.class);
+            intent.putExtra("total_price", calculateTotalPrice());
+            startActivity(intent);
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -184,16 +178,35 @@ public class ShoppingBasket extends AppCompatActivity {
     }
 
     private void updateTotalPrice() {
-        int total = 0;
-
-        for (CartItem item : cartItems) {
-            int price = item.getProduct().getPPrice();  // 상품 가격
-            int qty = item.getQuantity();               // 수량
-            total += price * qty;
-        }
+        int total = calculateTotalPrice();
 
         binding.tvTotalPrice.setText("총 금액: " + total + "원");
         binding.tvScannedPrice.setText("₩ " + total);
+    }
+
+    private int calculateTotalPrice() {
+        int total = 0;
+        for (CartItem item : cartItems) {
+            int price = item.getProduct().getPPrice();
+            int qty = item.getQuantity();
+            total += price * qty;
+        }
+        return total;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        syncCartFromManager();
+    }
+
+    private void syncCartFromManager() {
+        cartItems.clear();
+        for (Product product : CartManager.getInstance().getCartItems()) {
+            cartItems.add(new CartItem(product, product.getCartQuantity()));
+        }
+        cartAdapter.setData(cartItems);
+        updateTotalPrice();
     }
 
 }

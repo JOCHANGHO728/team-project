@@ -29,6 +29,12 @@
             android:name=".Customer.Shoppingbasket.ShoppingBasket"
             android:exported="false" />
         <activity
+            android:name=".Customer.Shoppingbasket.Payment"
+            android:exported="false" />
+        <activity
+            android:name=".Customer.Shoppingbasket.PaymentWebViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".Customer.Customer"
             android:exported="false" />
         <activity
