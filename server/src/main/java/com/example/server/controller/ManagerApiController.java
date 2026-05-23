@@ -12,6 +12,7 @@ import com.example.server.security.ManagerTokenService;
 import com.example.server.service.ManagerService;
 import com.example.server.service.ProductService;
 import com.example.server.service.PurchaseHistoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class ManagerApiController {
 
     // 1. 관리자 로그인
     @PostMapping("/login")
-    public ApiResponse<ManagerAuthResponse> login(@RequestBody ManagerLoginDto request) {
+    public ApiResponse<ManagerAuthResponse> login(@Valid @RequestBody ManagerLoginDto request) {
         Manager manager = managerService.login(request);
         ManagerTokenService.IssuedToken issuedToken = managerTokenService.issueToken(manager.getManagerId());
         ManagerAuthResponse response = new ManagerAuthResponse(
@@ -53,14 +54,14 @@ public class ManagerApiController {
 
     // 3. 상품 등록
     @PostMapping("/products")
-    public ApiResponse<Void> addProduct(@RequestBody ProductCreateDto request) {
+    public ApiResponse<Void> addProduct(@Valid @RequestBody ProductCreateDto request) {
         productService.createProduct(request);
         return ApiResponse.success("상품 등록 완료", null);
     }
 
     // 4. 상품 수정
     @PutMapping("/products/{pId}")
-    public ApiResponse<Void> updateProduct(@PathVariable Long pId, @RequestBody ProductUpdateDto request) {
+    public ApiResponse<Void> updateProduct(@PathVariable Long pId, @Valid @RequestBody ProductUpdateDto request) {
         productService.updateProduct(pId, request);
         return ApiResponse.success("상품 수정 완료", null);
     }

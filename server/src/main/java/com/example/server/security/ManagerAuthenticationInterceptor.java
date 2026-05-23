@@ -32,7 +32,7 @@ public class ManagerAuthenticationInterceptor implements HandlerInterceptor {
             request.setAttribute("authenticatedManagerId", managerId);
             return true;
         } catch (IllegalArgumentException e) {
-            writeUnauthorized(response, e.getMessage());
+            writeUnauthorized(response, "유효하지 않은 인증 토큰입니다.");
             return false;
         }
     }

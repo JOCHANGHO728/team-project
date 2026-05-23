@@ -36,7 +36,7 @@ public class ManagerTokenService {
 
     public IssuedToken issueToken(String managerId) {
         long expiresAt = getExpiryTimestamp();
-        String payload = managerId + ":" + expiresAt;
+        String payload = "MANAGER:" + managerId + ":" + expiresAt;
         String encodedPayload = URL_ENCODER.encodeToString(payload.getBytes(StandardCharsets.UTF_8));
         String signature = sign(encodedPayload);
         return new IssuedToken(encodedPayload + "." + signature, expiresAt);
@@ -45,7 +45,7 @@ public class ManagerTokenService {
     public String validateAndGetManagerId(String token) {
         String[] parts = token.split("\\.");
         if (parts.length != 2) {
-            throw new IllegalArgumentException("토큰 형식이 올바르지 않습니다.");
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
         }
 
         String payload = parts[0];
@@ -53,27 +53,38 @@ public class ManagerTokenService {
         byte[] providedSignature = parts[1].getBytes(StandardCharsets.UTF_8);
         byte[] actualSignature = expectedSignature.getBytes(StandardCharsets.UTF_8);
         if (!MessageDigest.isEqual(providedSignature, actualSignature)) {
-            throw new IllegalArgumentException("토큰 서명이 유효하지 않습니다.");
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
         }
 
         String decodedPayload = new String(URL_DECODER.decode(payload), StandardCharsets.UTF_8);
-        String[] payloadParts = decodedPayload.split(":");
-        if (payloadParts.length != 2) {
-            throw new IllegalArgumentException("토큰 payload 형식이 올바르지 않습니다.");
+        int lastColon = decodedPayload.lastIndexOf(':');
+        if (lastColon <= 0) {
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
+        }
+        String identity = decodedPayload.substring(0, lastColon);
+        String expiresAtStr = decodedPayload.substring(lastColon + 1);
+        int typeSeparator = identity.indexOf(':');
+        if (typeSeparator <= 0) {
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
+        }
+        String tokenType = identity.substring(0, typeSeparator);
+        String managerId = identity.substring(typeSeparator + 1);
+        if (!"MANAGER".equals(tokenType) || managerId.isBlank()) {
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
         }
 
         long expiresAt;
         try {
-            expiresAt = Long.parseLong(payloadParts[1]);
+            expiresAt = Long.parseLong(expiresAtStr);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("토큰 만료 시간이 올바르지 않습니다.");
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
         }
 
         if (System.currentTimeMillis() > expiresAt) {
-            throw new IllegalArgumentException("토큰이 만료되었습니다.");
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
         }
 
-        return payloadParts[0];
+        return managerId;
     }
 
     public long getExpiryTimestamp() {

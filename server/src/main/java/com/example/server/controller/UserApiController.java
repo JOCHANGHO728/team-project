@@ -7,6 +7,7 @@ import com.example.server.dto.UserSignupDto;
 import com.example.server.entity.User;
 import com.example.server.security.UserTokenService;
 import com.example.server.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class UserApiController {
     private final UserTokenService userTokenService;
 
     @PostMapping("/login")
-    public ApiResponse<UserAuthResponse> login(@RequestBody UserLoginDto request) {
+    public ApiResponse<UserAuthResponse> login(@Valid @RequestBody UserLoginDto request) {
         User user = userService.login(request);
         UserTokenService.IssuedToken issuedToken = userTokenService.issueToken(user.getUId());
 
@@ -33,7 +34,7 @@ public class UserApiController {
     }
 
     @PostMapping("/signup")
-    public ApiResponse<String> signup(@RequestBody UserSignupDto request) {
+    public ApiResponse<String> signup(@Valid @RequestBody UserSignupDto request) {
         String message = userService.signup(request);
         return ApiResponse.success("회원가입 성공", message);
     }

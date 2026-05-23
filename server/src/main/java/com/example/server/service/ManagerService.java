@@ -16,11 +16,11 @@ public class ManagerService {
 
     public Manager login(ManagerLoginDto request) {
         Manager manager = managerRepository.findByManagerId(request.getManagerId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자 아이디입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다."));
 
         // 수정: .equals() 대신 BCrypt matches()로 비교
         if (!passwordEncoder.matches(request.getMPassword(), manager.getMPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다.");
         }
 
         return manager;

@@ -20,7 +20,7 @@ public class UserTokenService {
     private final long tokenTtlMillis;
 
     public UserTokenService(
-            @Value("${user.auth.secret:${manager.auth.secret:${MANAGER_AUTH_SECRET:}}}") String secret,
+            @Value("${user.auth.secret:${USER_AUTH_SECRET:}}") String secret,
             @Value("${user.auth.token-ttl-millis:${USER_AUTH_TOKEN_TTL_MILLIS:43200000}}") long tokenTtlMillis
     ) {
         this.secret = secret;
@@ -36,7 +36,7 @@ public class UserTokenService {
 
     public IssuedToken issueToken(String uId) {
         long expiresAt = getExpiryTimestamp();
-        String payload = uId + ":" + expiresAt;
+        String payload = "USER:" + uId + ":" + expiresAt;
         String encodedPayload = URL_ENCODER.encodeToString(payload.getBytes(StandardCharsets.UTF_8));
         String signature = sign(encodedPayload);
         return new IssuedToken(encodedPayload + "." + signature, expiresAt);
@@ -45,7 +45,7 @@ public class UserTokenService {
     public String validateAndGetUserId(String token) {
         String[] parts = token.split("\\.");
         if (parts.length != 2) {
-            throw new IllegalArgumentException("토큰 형식이 올바르지 않습니다.");
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
         }
 
         String payload = parts[0];
@@ -53,27 +53,35 @@ public class UserTokenService {
         byte[] providedSignature = parts[1].getBytes(StandardCharsets.UTF_8);
         byte[] actualSignature = expectedSignature.getBytes(StandardCharsets.UTF_8);
         if (!MessageDigest.isEqual(providedSignature, actualSignature)) {
-            throw new IllegalArgumentException("토큰 서명이 유효하지 않습니다.");
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
         }
 
         String decodedPayload = new String(URL_DECODER.decode(payload), StandardCharsets.UTF_8);
         int lastColon = decodedPayload.lastIndexOf(':');
-        if (lastColon == -1) {
-            throw new IllegalArgumentException("토큰 payload 형식이 올바르지 않습니다.");
+        if (lastColon <= 0) {
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
         }
-
-        String uId = decodedPayload.substring(0, lastColon);
+        String identity = decodedPayload.substring(0, lastColon);
         String expiresAtStr = decodedPayload.substring(lastColon + 1);
+        int typeSeparator = identity.indexOf(':');
+        if (typeSeparator <= 0) {
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
+        }
+        String tokenType = identity.substring(0, typeSeparator);
+        String uId = identity.substring(typeSeparator + 1);
+        if (!"USER".equals(tokenType) || uId.isBlank()) {
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
+        }
 
         long expiresAt;
         try {
             expiresAt = Long.parseLong(expiresAtStr);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("토큰 만료 시간이 올바르지 않습니다.");
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
         }
 
         if (System.currentTimeMillis() > expiresAt) {
-            throw new IllegalArgumentException("토큰이 만료되었습니다.");
+            throw new IllegalArgumentException("유효하지 않은 인증 토큰입니다.");
         }
 
         return uId;

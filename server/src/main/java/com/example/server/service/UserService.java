@@ -18,11 +18,11 @@ public class UserService {
 
     public User login(UserLoginDto request) {
         User user = userRepository.findByUId(request.getUId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고객 아이디입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다."));
 
         // 수정: .equals() 대신 BCrypt matches()로 비교
         if (!passwordEncoder.matches(request.getUPassword(), user.getUPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다.");
         }
         return user;
     }

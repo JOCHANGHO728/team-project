@@ -12,13 +12,13 @@ public class Manager {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "manager_id")
+    @Column(name = "manager_id", unique = true, nullable = false)
     private String managerId;
 
-    @Column(name = "m_password")
+    @Column(name = "m_password", nullable = false)
     private String mPassword;
 
-    @Column(name = "m_name")
+    @Column(name = "m_name", nullable = false)
     private String mName;
 
     @Column(name = "phone_number")
