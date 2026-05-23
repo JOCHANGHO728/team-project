@@ -165,7 +165,12 @@ public class household_Ledger extends AppCompatActivity {
         String endDate = apiDateFormat.format(lastDay.getTime());
 
         RetrofitClient.getInstance().getApiService()
-                .getPurchaseHistoryByRange(userId, startDate, endDate)
+                .getPurchaseHistoryByRange(
+                        CartManager.getInstance().getAuthorizationHeader(),
+                        userId,
+                        startDate,
+                        endDate
+                )
                 .enqueue(new Callback<ApiResponse<List<PurchaseHistoryItem>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<List<PurchaseHistoryItem>>> call,

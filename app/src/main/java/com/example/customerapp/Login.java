@@ -15,6 +15,7 @@ import com.example.customerapp.DataModel.ApiResponse;
 import com.example.customerapp.DataModel.CartManager;
 import com.example.customerapp.DataModel.LoginRequest;
 import com.example.customerapp.DataModel.RetrofitClient;
+import com.example.customerapp.DataModel.UserAuthResponse;
 import com.example.customerapp.databinding.ActivityLoginBinding;
 
 import retrofit2.Call;
@@ -46,14 +47,15 @@ public class Login extends AppCompatActivity {
 
             LoginRequest request = new LoginRequest(uId, uPassword);
             RetrofitClient.getInstance().getApiService().login(request)
-                    .enqueue(new Callback<ApiResponse<String>>() {
+                    .enqueue(new Callback<ApiResponse<UserAuthResponse>>() {
                         @Override
-                        public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                        public void onResponse(Call<ApiResponse<UserAuthResponse>> call, Response<ApiResponse<UserAuthResponse>> response) {
                             if (response.isSuccessful() && response.body() != null) {
-                                ApiResponse<String> result = response.body();
-                                if (result.isSuccess()) {
-                                    // 로그인 성공 - userId 저장
-                                    CartManager.getInstance().setLoggedInUserId(uId);
+                                ApiResponse<UserAuthResponse> result = response.body();
+                                if (result.isSuccess() && result.getData() != null) {
+                                    UserAuthResponse auth = result.getData();
+                                    CartManager.getInstance().setLoggedInUserId(auth.getLoginId());
+                                    CartManager.getInstance().setAccessToken(auth.getAccessToken());
                                     Toast.makeText(Login.this, "로그인 성공!", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(Login.this, Customer.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -67,7 +69,7 @@ public class Login extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                        public void onFailure(Call<ApiResponse<UserAuthResponse>> call, Throwable t) {
                             Toast.makeText(Login.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });

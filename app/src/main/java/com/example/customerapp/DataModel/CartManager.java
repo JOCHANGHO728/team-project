@@ -7,6 +7,7 @@ public class CartManager {
     private static CartManager instance;
     private List<Product> cartItems = new ArrayList<>();
     private String loggedInUserId = "";
+    private String accessToken = "";
 
     private CartManager() {}
 
@@ -19,6 +20,11 @@ public class CartManager {
 
     public void setLoggedInUserId(String uId) { this.loggedInUserId = uId; }
     public String getLoggedInUserId() { return loggedInUserId; }
+    public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
+    public String getAccessToken() { return accessToken; }
+    public String getAuthorizationHeader() {
+        return (accessToken == null || accessToken.isBlank()) ? "" : "Bearer " + accessToken;
+    }
 
     public void addItem(Product product) {
         for (Product item : cartItems) {

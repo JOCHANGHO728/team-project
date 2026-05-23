@@ -65,7 +65,12 @@ public class LedgerResultActivity extends AppCompatActivity {
         }
 
         RetrofitClient.getInstance().getApiService()
-                .getPurchaseHistoryByRange(userId, startDate, endDate)
+                .getPurchaseHistoryByRange(
+                        CartManager.getInstance().getAuthorizationHeader(),
+                        userId,
+                        startDate,
+                        endDate
+                )
                 .enqueue(new Callback<ApiResponse<List<PurchaseHistoryItem>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<List<PurchaseHistoryItem>>> call,
