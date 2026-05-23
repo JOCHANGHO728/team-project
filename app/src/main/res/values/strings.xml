@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">CustomerApp</string>
-    <string name="title_activity_shopping_list">shopping_List</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>

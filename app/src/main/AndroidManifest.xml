@@ -41,9 +41,6 @@
             android:name=".Customer.Shopping.Category"
             android:exported="false" />
         <activity
-            android:name=".Customer.Shopping.Shopping"
-            android:exported="false" />
-        <activity
             android:name=".Customer.Household_Ledger.household_Ledger"
             android:exported="false" />
         <activity
