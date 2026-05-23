@@ -1,0 +1,91 @@
+package com.example.server.controller;
+
+import com.example.server.common.ApiResponse;
+import com.example.server.dto.ManagerAuthResponse;
+import com.example.server.dto.ManagerLoginDto;
+import com.example.server.dto.ProductCreateDto;
+import com.example.server.dto.ProductResponseDto;
+import com.example.server.dto.ProductUpdateDto;
+import com.example.server.dto.PurchaseHistoryDto;
+import com.example.server.entity.Manager;
+import com.example.server.security.ManagerTokenService;
+import com.example.server.service.ManagerService;
+import com.example.server.service.ProductService;
+import com.example.server.service.PurchaseHistoryService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/v1/managers")
+@RequiredArgsConstructor
+public class ManagerApiController {
+
+    private final ManagerService managerService;
+    private final ManagerTokenService managerTokenService;
+    private final ProductService productService;
+    private final PurchaseHistoryService purchaseHistoryService;
+
+    // 1. 관리자 로그인
+    @PostMapping("/login")
+    public ApiResponse<ManagerAuthResponse> login(@Valid @RequestBody ManagerLoginDto request) {
+        Manager manager = managerService.login(request);
+        ManagerTokenService.IssuedToken issuedToken = managerTokenService.issueToken(manager.getManagerId());
+        ManagerAuthResponse response = new ManagerAuthResponse(
+                manager.getManagerId(),
+                manager.getMName(),
+                issuedToken.accessToken(),
+                issuedToken.expiresAt()
+        );
+        return ApiResponse.success("로그인 성공", response);
+    }
+
+    // 2. 전체 상품 조회
+    @GetMapping("/products")
+    public ApiResponse<List<ProductResponseDto>> getAllProducts() {
+        List<ProductResponseDto> products = productService.getAllProducts().stream()
+                .map(ProductResponseDto::new)
+                .collect(Collectors.toList());
+        return ApiResponse.success("전체 상품 조회 성공", products);
+    }
+
+    // 3. 상품 등록
+    @PostMapping("/products")
+    public ApiResponse<Void> addProduct(@Valid @RequestBody ProductCreateDto request) {
+        productService.createProduct(request);
+        return ApiResponse.success("상품 등록 완료", null);
+    }
+
+    // 4. 상품 수정
+    @PutMapping("/products/{pId}")
+    public ApiResponse<Void> updateProduct(@PathVariable Long pId, @Valid @RequestBody ProductUpdateDto request) {
+        productService.updateProduct(pId, request);
+        return ApiResponse.success("상품 수정 완료", null);
+    }
+
+    // 5. 상품 삭제
+    @DeleteMapping("/products/{pId}")
+    public ApiResponse<Void> deleteProduct(@PathVariable Long pId) {
+        productService.deleteProduct(pId);
+        return ApiResponse.success("상품 삭제 완료", null);
+    }
+
+    // 6. 상품 검색
+    @GetMapping("/products/search")
+    public ApiResponse<List<ProductResponseDto>> searchProducts(@RequestParam("name") String keyword) {
+        List<ProductResponseDto> products = productService.searchProductsByName(keyword).stream()
+                .map(ProductResponseDto::new)
+                .collect(Collectors.toList());
+        return ApiResponse.success("상품 검색 성공", products);
+    }
+
+    // 7. 전체 회원의 구매 내역 조회 (보안 이전 완료)
+    @GetMapping("/purchase-history")
+    public ApiResponse<List<PurchaseHistoryDto>> getAllPurchaseHistories() {
+        List<PurchaseHistoryDto> historyList = purchaseHistoryService.getAllPurchaseHistories();
+        return ApiResponse.success("전체 구매 내역 조회 성공", historyList);
+    }
+}

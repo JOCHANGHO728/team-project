@@ -12,6 +12,9 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+        buildConfigField("String", "PORTONE_IMP_CODE", "\"imp03532732\"")
+        buildConfigField("String", "PORTONE_PG", "\"tosspay.tosstest\"")
+        buildConfigField("String", "PORTONE_CHANNEL_KEY", "\"channel-key-0f1adf77-79de-4121-89b7-f44dd5422cc2\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -30,6 +33,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
+        buildConfig = true
         viewBinding = true
     }
 }

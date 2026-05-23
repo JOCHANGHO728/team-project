@@ -140,8 +140,14 @@ public class ShoppingBasket extends AppCompatActivity {
 
         // 결제 버튼
         binding.btnOrder.setOnClickListener(v -> {
-            Intent intent = new Intent(ShoppingBasket.this, Payment.class);
-            intent.putExtra("total_price", calculateTotalPrice());
+            int totalPrice = calculateTotalPrice();
+            if (totalPrice <= 0) {
+                Toast.makeText(ShoppingBasket.this, "장바구니가 비어있습니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Intent intent = new Intent(ShoppingBasket.this, PortOnePaymentWebViewActivity.class);
+            intent.putExtra("total_price", totalPrice);
             startActivity(intent);
         });
 

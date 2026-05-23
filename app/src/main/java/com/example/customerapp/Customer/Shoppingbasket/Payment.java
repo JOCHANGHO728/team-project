@@ -23,7 +23,7 @@ public class Payment extends AppCompatActivity {
         binding.btnBack.setOnClickListener(v -> finish());
         binding.btnPayFinal.setOnClickListener(v -> {
             if (binding.rbSimple.isChecked()) {
-                Intent intent = new Intent(Payment.this, PaymentWebViewActivity.class);
+                Intent intent = new Intent(Payment.this, PortOnePaymentWebViewActivity.class);
                 intent.putExtra("total_price", totalPrice);
                 startActivity(intent);
             } else {

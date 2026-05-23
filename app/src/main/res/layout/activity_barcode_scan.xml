@@ -48,26 +48,26 @@
         app:layout_constraintTop_toBottomOf="@id/tv_barcode_title"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
 
-        <!-- 카메라 프리뷰 -->
-        <androidx.camera.view.PreviewView
-            android:id="@+id/cameraPreview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:keepScreenOn="true"
-            android:background="#000000" />
-
-        <!-- 스캔 가이드 박스 -->
+        <!-- 카메라 프리뷰 + 중앙 스캔 가이드 오버레이 -->
         <FrameLayout
             android:id="@+id/scan_guide_frame"
             android:layout_width="match_parent"
-            android:layout_height="260dp"
-            android:gravity="center">
+            android:layout_height="308dp">
+
+            <androidx.camera.view.PreviewView
+                android:id="@+id/cameraPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:keepScreenOn="true"
+                android:background="#000000"
+                app:implementationMode="compatible" />
 
             <View
                 android:id="@+id/scanGuide"
-                android:layout_width="240dp"
-                android:layout_height="240dp"
+                android:layout_width="145dp"
+                android:layout_height="118dp"
+                android:layout_gravity="center"
+                android:elevation="10dp"
                 android:background="@drawable/scan_guide_box" />
         </FrameLayout>
 

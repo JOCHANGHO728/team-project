@@ -97,8 +97,18 @@ public class household_Ledger extends AppCompatActivity {
 
         // --- 4. 조회 기능 (최종 수정본: 결과 화면으로 이동) ---
         binding.buttonSearch.setOnClickListener(v -> {
-            if (startDateCalendar == null || endDateCalendar == null) {
-                Toast.makeText(this, "시작 날짜와 종료 날짜를 모두 설정해주세요.", Toast.LENGTH_SHORT).show();
+            Calendar today = Calendar.getInstance();
+            if (startDateCalendar == null) {
+                startDateCalendar = (Calendar) today.clone();
+                binding.StartDate.setHint("선택한 날짜: " + formatKoreanDate(startDateCalendar));
+            }
+            if (endDateCalendar == null) {
+                endDateCalendar = (Calendar) today.clone();
+                binding.EndDate.setHint("선택한 날짜: " + formatKoreanDate(endDateCalendar));
+            }
+
+            if (endDateCalendar.before(startDateCalendar)) {
+                Toast.makeText(this, "종료 날짜는 시작 날짜 이후여야 합니다.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -145,6 +155,12 @@ public class household_Ledger extends AppCompatActivity {
         });
 
         loadCurrentMonthPieChart();
+    }
+
+    private String formatKoreanDate(Calendar calendar) {
+        return calendar.get(Calendar.YEAR) + "년 "
+                + (calendar.get(Calendar.MONTH) + 1) + "월 "
+                + calendar.get(Calendar.DAY_OF_MONTH) + "일";
     }
 
     private void loadCurrentMonthPieChart() {

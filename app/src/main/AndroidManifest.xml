@@ -32,8 +32,18 @@
             android:name=".Customer.Shoppingbasket.Payment"
             android:exported="false" />
         <activity
-            android:name=".Customer.Shoppingbasket.PaymentWebViewActivity"
+            android:name=".Customer.Shoppingbasket.PaymentSuccessActivity"
             android:exported="false" />
+        <activity
+            android:name=".Customer.Shoppingbasket.PortOnePaymentWebViewActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="customerapp" android:host="payment-callback" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Customer.Customer"
             android:exported="false" />

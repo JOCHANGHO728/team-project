@@ -113,7 +113,7 @@ public class LedgerResultActivity extends AppCompatActivity {
                     PurchaseHistoryItem first = orderItems.get(0);
                     String lines = orderItems.stream()
                             .map(item -> String.format("%s x%d  %,d원",
-                                    item.getPName(), item.getQuantity(), item.getLineTotal()))
+                                    item.getDisplayPName(), item.getQuantity(), item.getLineTotal()))
                             .collect(Collectors.joining("\n"));
                     return new LedgerReceiptAdapter.LedgerReceipt(
                             entry.getKey(),
