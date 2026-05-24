@@ -1,10 +1,3 @@
-**진단**
-- 코드 기준으로 `CustomerApp` README 초안 작성했습니다.
-- 아래 내용을 그대로 `C:\Users\chang\intelliJ\README.md`에 붙여넣으면 됩니다.
-
-**Minimal Fix: `C:\Users\chang\intelliJ\README.md`**
-
-```markdown
 # CustomerApp
 
 마트/편의점 고객용 쇼핑 Android 앱입니다. 상품 조회, 장바구니, 바코드 스캔, 간편결제 테스트, 구매내역 조회, 생체로그인을 지원합니다.
