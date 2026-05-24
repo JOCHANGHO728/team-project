@@ -69,12 +69,7 @@ public class BarcodeScan extends AppCompatActivity {
         }
 
         // 뒤로가기 버튼
-        binding.btnBack.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ShoppingBasket.class);
-            intent.putExtra("scannedItems", (Serializable) scannedItems);
-            setResult(RESULT_OK, intent);
-            finish();
-        });
+        binding.btnBack.setOnClickListener(v -> returnScannedItems());
 
         // 하단 네비게이션 바 설정
         binding.bottomNavigation.setSelectedItemId(R.id.nav_cart);
@@ -83,7 +78,8 @@ public class BarcodeScan extends AppCompatActivity {
             Intent intent = null;
 
             if (id == R.id.nav_cart) {
-                intent = new Intent(this, ShoppingBasket.class);
+                returnScannedItems();
+                return true;
             } else if (id == R.id.nav_shopping) {
                 intent = new Intent(this, Customer.class);
             } else if (id == R.id.nav_ledger) {
@@ -100,6 +96,13 @@ public class BarcodeScan extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    private void returnScannedItems() {
+        Intent intent = new Intent(this, ShoppingBasket.class);
+        intent.putExtra("scannedItems", (Serializable) scannedItems);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     private void startCamera() {

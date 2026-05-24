@@ -1,7 +1,9 @@
 package com.example.customerapp.Customer.Shoppingbasket;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class PaymentSuccessActivity extends AppCompatActivity {
+    private Button btnReturn;
+    private boolean orderSaved = false;
+    private boolean orderSaving = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +37,14 @@ public class PaymentSuccessActivity extends AppCompatActivity {
 
         int totalPrice = getIntent().getIntExtra("total_price", 0);
         String merchantUid = getIntent().getStringExtra("merchant_uid");
+        String paymentType = getIntent().getStringExtra("payment_type");
 
         TextView tvAmount = findViewById(R.id.tv_success_amount);
         TextView tvOrderId = findViewById(R.id.tv_success_order_id);
         TextView tvReceipt = findViewById(R.id.tv_success_receipt);
+        btnReturn = findViewById(R.id.btn_success_return);
 
-        tvAmount.setText("결제 금액: ₩ " + totalPrice);
+        tvAmount.setText((paymentType == null ? "결제" : paymentType) + " 금액: ₩ " + totalPrice);
         if (merchantUid == null || merchantUid.isBlank()) {
             tvOrderId.setText("주문번호: 확인 중");
         } else {
@@ -45,7 +52,14 @@ public class PaymentSuccessActivity extends AppCompatActivity {
         }
         tvReceipt.setText(buildReceiptText(totalPrice));
 
-        findViewById(R.id.btn_success_return).setOnClickListener(v -> saveOrderThenReturn());
+        btnReturn.setOnClickListener(v -> {
+            if (orderSaved) {
+                moveToBasket();
+            } else {
+                saveOrder();
+            }
+        });
+        saveOrder();
     }
 
     private String buildReceiptText(int totalPrice) {
@@ -80,11 +94,21 @@ public class PaymentSuccessActivity extends AppCompatActivity {
         return receipt.toString();
     }
 
-    private void saveOrderThenReturn() {
-        findViewById(R.id.btn_success_return).setEnabled(false);
+    private void saveOrder() {
+        if (orderSaving || orderSaved) {
+            return;
+        }
+
+        orderSaving = true;
+        btnReturn.setEnabled(false);
+        btnReturn.setText("결제내역 저장 중...");
+
         List<Product> cartProducts = CartManager.getInstance().getCartItems();
         if (cartProducts == null || cartProducts.isEmpty()) {
-            moveToBasket();
+            orderSaved = true;
+            orderSaving = false;
+            btnReturn.setEnabled(true);
+            btnReturn.setText("장바구니로 돌아가기");
             return;
         }
 
@@ -96,7 +120,10 @@ public class PaymentSuccessActivity extends AppCompatActivity {
         }
 
         if (orderItems.isEmpty()) {
-            moveToBasket();
+            orderSaved = true;
+            orderSaving = false;
+            btnReturn.setEnabled(true);
+            btnReturn.setText("장바구니로 돌아가기");
             return;
         }
 
@@ -104,7 +131,9 @@ public class PaymentSuccessActivity extends AppCompatActivity {
         String authorization = CartManager.getInstance().getAuthorizationHeader();
         if (loginId == null || loginId.isBlank() || authorization == null || authorization.isBlank()) {
             Toast.makeText(this, "로그인 정보가 없어 주문 저장에 실패했습니다.", Toast.LENGTH_LONG).show();
-            findViewById(R.id.btn_success_return).setEnabled(true);
+            orderSaving = false;
+            btnReturn.setEnabled(true);
+            btnReturn.setText("다시 저장 후 돌아가기");
             return;
         }
 
@@ -115,19 +144,36 @@ public class PaymentSuccessActivity extends AppCompatActivity {
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                             CartManager.getInstance().clearCart();
-                            moveToBasket();
+                            orderSaved = true;
+                            orderSaving = false;
+                            btnReturn.setEnabled(true);
+                            btnReturn.setText("장바구니로 돌아가기");
                             return;
                         }
                         Toast.makeText(PaymentSuccessActivity.this, "결제내역 저장에 실패했습니다.", Toast.LENGTH_LONG).show();
-                        findViewById(R.id.btn_success_return).setEnabled(true);
+                        orderSaving = false;
+                        btnReturn.setEnabled(true);
+                        btnReturn.setText("다시 저장 후 돌아가기");
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                         Toast.makeText(PaymentSuccessActivity.this, "네트워크 오류로 결제내역 저장에 실패했습니다.", Toast.LENGTH_LONG).show();
-                        findViewById(R.id.btn_success_return).setEnabled(true);
+                        orderSaving = false;
+                        btnReturn.setEnabled(true);
+                        btnReturn.setText("다시 저장 후 돌아가기");
                     }
                 });
+    }
+
+    @Override
+    @SuppressLint("MissingSuperCall")
+    public void onBackPressed() {
+        if (!orderSaved) {
+            Toast.makeText(this, "결제내역 저장 후 이동할 수 있습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        moveToBasket();
     }
 
     private void moveToBasket() {

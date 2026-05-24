@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -221,7 +222,7 @@ public class Customer extends AppCompatActivity {
 
     // 검색어에 따른 상품 필터링 로직
     private void filterProducts(String query) {
-        String normalized = query == null ? "" : query.trim().toLowerCase();
+        String normalized = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
         refreshDisplayProducts(normalized);
     }
 
@@ -301,7 +302,7 @@ public class Customer extends AppCompatActivity {
             String name = product.getPName();
             if (name == null || name.isBlank()) continue;
 
-            if (!normalizedQuery.isEmpty() && !name.toLowerCase().contains(normalizedQuery)) {
+            if (!normalizedQuery.isEmpty() && !name.toLowerCase(Locale.ROOT).contains(normalizedQuery)) {
                 continue;
             }
 
@@ -462,7 +463,7 @@ public class Customer extends AppCompatActivity {
         }
 
         private boolean isBoxProduct(String name) {
-            String normalized = name.toUpperCase();
+            String normalized = name.toUpperCase(Locale.ROOT);
             return normalized.contains("BOX") || name.contains("박스");
         }
 

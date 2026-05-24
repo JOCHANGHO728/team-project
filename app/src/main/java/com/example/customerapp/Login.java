@@ -45,7 +45,12 @@ public class Login extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         biometricPrefs = createBiometricPrefs();
-        binding.cbBiometricLogin.setChecked(biometricPrefs.getBoolean(KEY_ENABLED, false));
+        if (biometricPrefs == null) {
+            binding.cbBiometricLogin.setChecked(false);
+            binding.cbBiometricLogin.setEnabled(false);
+        } else {
+            binding.cbBiometricLogin.setChecked(biometricPrefs.getBoolean(KEY_ENABLED, false));
+        }
 
         binding.btnLoginSubmit.setOnClickListener(v -> {
             String uId = binding.etLoginId.getText().toString().trim();
@@ -86,12 +91,15 @@ public class Login extends AppCompatActivity {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
         } catch (Exception e) {
-            Toast.makeText(this, "암호화 저장소 초기화 실패", Toast.LENGTH_SHORT).show();
-            return getSharedPreferences(BIOMETRIC_PREFS, MODE_PRIVATE);
+            Toast.makeText(this, "암호화 저장소 초기화 실패로 생체로그인을 사용할 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return null;
         }
     }
 
     private void tryBiometricLogin() {
+        if (biometricPrefs == null) {
+            return;
+        }
         if (!biometricPrefs.getBoolean(KEY_ENABLED, false)) {
             return;
         }
@@ -165,6 +173,9 @@ public class Login extends AppCompatActivity {
     }
 
     private void saveBiometricPreference(String uId, String uPassword) {
+        if (biometricPrefs == null) {
+            return;
+        }
         if (binding.cbBiometricLogin.isChecked()) {
             biometricPrefs.edit()
                     .putBoolean(KEY_ENABLED, true)

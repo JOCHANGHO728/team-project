@@ -46,8 +46,11 @@ public class Payment extends AppCompatActivity {
                 intent.putExtra("pay_name", selectedSimplePay);
                 startActivity(intent);
             } else {
-                Toast.makeText(Payment.this, "현장결제를 선택했습니다.", Toast.LENGTH_SHORT).show();
-                finish();
+                Intent intent = new Intent(Payment.this, PaymentSuccessActivity.class);
+                intent.putExtra("total_price", totalPrice);
+                intent.putExtra("merchant_uid", "onsite_" + System.currentTimeMillis());
+                intent.putExtra("payment_type", "현장결제");
+                startActivity(intent);
             }
         });
     }
