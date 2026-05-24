@@ -8,6 +8,7 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
     <application
         android:allowBackup="true"
@@ -21,9 +22,6 @@
         tools:targetApi="31">
         <activity
             android:name=".Customer.BarcodeScan.BarcodeScan"
-            android:exported="false" />
-        <activity
-            android:name=".Customer.Shoppingbasket.MakeBarcode"
             android:exported="false" />
         <activity
             android:name=".Customer.Shoppingbasket.ShoppingBasket"
@@ -55,9 +53,6 @@
             android:exported="false" />
         <activity
             android:name=".Login"
-            android:exported="false" />
-        <activity
-            android:name=".Customer.Shopping.Category"
             android:exported="false" />
         <activity
             android:name=".Customer.Household_Ledger.household_Ledger"

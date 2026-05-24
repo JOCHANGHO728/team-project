@@ -2,36 +2,53 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="82dp"
+    android:layout_marginHorizontal="5dp"
     android:layout_marginBottom="10dp"
-    app:cardCornerRadius="14dp"
-    app:cardElevation="1dp"
-    app:cardBackgroundColor="#F7F7F7">
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="1dp">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="14dp"
-        android:paddingVertical="12dp">
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/tv_option_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#111111"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_option_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="#444444"
+                android:textSize="13sp" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_option_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="#111111"
-            android:textSize="15sp"
+            android:id="@+id/tv_discount_badge"
+            android:layout_width="match_parent"
+            android:layout_height="22dp"
+            android:layout_gravity="top"
+            android:background="#111111"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
             android:textStyle="bold"
-            android:maxLines="1" />
-
-        <TextView
-            android:id="@+id/tv_option_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#222222"
-            android:textSize="14sp" />
-    </LinearLayout>
-
+            android:visibility="gone" />
+    </FrameLayout>
 </androidx.cardview.widget.CardView>

@@ -38,7 +38,14 @@ public class PortOnePaymentWebViewActivity extends AppCompatActivity {
         }
 
         String impCode = BuildConfig.PORTONE_IMP_CODE;
-        String pgCode = BuildConfig.PORTONE_PG;
+        String pgCode = getIntent().getStringExtra("pg_code");
+        String payName = getIntent().getStringExtra("pay_name");
+        if (pgCode == null || pgCode.isBlank()) {
+            pgCode = BuildConfig.PORTONE_PG_TOSS;
+        }
+        if (payName == null || payName.isBlank()) {
+            payName = "간편결제";
+        }
         if (impCode == null || impCode.isBlank() || "imp_your_code".equals(impCode)) {
             Toast.makeText(this, "PortOne 가맹점 식별코드(imp_xxx)를 설정하세요.", Toast.LENGTH_LONG).show();
             finish();
@@ -116,7 +123,7 @@ public class PortOnePaymentWebViewActivity extends AppCompatActivity {
                 + "<script src='https://code.jquery.com/jquery-1.12.4.min.js'></script>"
                 + "<script src='https://cdn.iamport.kr/js/iamport.payment-1.2.0.js'></script>"
                 + "<div style='font-family:sans-serif;padding:24px;'>"
-                + "<h3>토스 결제로 이동 중입니다</h3>"
+                + "<h3>" + payName + "로 이동 중입니다</h3>"
                 + "<p id='status' style='margin-top:12px;color:#666;'>결제창을 준비하고 있습니다.</p>"
                 + "</div>"
                 + "<script>"
@@ -154,7 +161,7 @@ public class PortOnePaymentWebViewActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
+        super.onBackPressed();
     }
 
     private void openResultPage(Uri uri, int fallbackAmount) {

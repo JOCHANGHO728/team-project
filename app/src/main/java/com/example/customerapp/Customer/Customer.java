@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +29,7 @@ import com.example.customerapp.Customer.Household_Ledger.household_Ledger;
 import com.example.customerapp.Customer.MyInfo;
 import android.content.Intent; // Intent 사용을 위해 필요
 import com.google.android.material.bottomnavigation.BottomNavigationView; // BottomNavigationView 사용을 위해 필요
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -245,29 +247,42 @@ public class Customer extends AppCompatActivity {
         }
 
         if (sameNameProducts.size() <= 1) {
-            CartManager.getInstance().addItem(selectedProduct);
-            Toast.makeText(this, "장바구니에 추가되었습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_product_options, null, false);
         TextView tvTitle = dialogView.findViewById(R.id.tv_option_title);
+        TextView tvSelectedName = dialogView.findViewById(R.id.tv_selected_name);
+        TextView tvSelectedPrice = dialogView.findViewById(R.id.tv_selected_price);
         RecyclerView rvOptions = dialogView.findViewById(R.id.rv_option_list);
+        MaterialButton btnAddSelectedProduct = dialogView.findViewById(R.id.btn_add_selected_product);
 
         tvTitle.setText(baseName + " 옵션 선택");
-        rvOptions.setLayoutManager(new LinearLayoutManager(this));
+        rvOptions.setLayoutManager(new GridLayoutManager(this, 2));
+
+        final Product[] selectedOption = {selectedProduct};
+        updateSelectedProductPreview(tvSelectedName, tvSelectedPrice, selectedOption[0]);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setView(dialogView)
                 .create();
 
-        VariantOptionAdapter optionAdapter = new VariantOptionAdapter(sameNameProducts, product -> {
-            CartManager.getInstance().addItem(product);
-            Toast.makeText(this, product.getPName() + " 추가", Toast.LENGTH_SHORT).show();
-            dialog.dismiss();
+        VariantOptionAdapter optionAdapter = new VariantOptionAdapter(baseName, sameNameProducts, product -> {
+            selectedOption[0] = product;
+            updateSelectedProductPreview(tvSelectedName, tvSelectedPrice, product);
         });
         rvOptions.setAdapter(optionAdapter);
+        btnAddSelectedProduct.setOnClickListener(v -> {
+            CartManager.getInstance().addItem(selectedOption[0]);
+            Toast.makeText(this, selectedOption[0].getPName() + " 추가", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
         dialog.show();
+    }
+
+    private void updateSelectedProductPreview(TextView tvName, TextView tvPrice, Product product) {
+        tvName.setText(product.getPName());
+        tvPrice.setText(product.getPPrice() + "원");
     }
 
     private String normalizeProductBaseName(String name) {
@@ -372,10 +387,15 @@ public class Customer extends AppCompatActivity {
 
         private final List<Product> options;
         private final OnVariantSelectListener listener;
+        private final String baseName;
+        private final int regularPrice;
+        private static final int BOX_UNIT_COUNT = 30;
 
-        VariantOptionAdapter(List<Product> options, OnVariantSelectListener listener) {
+        VariantOptionAdapter(String baseName, List<Product> options, OnVariantSelectListener listener) {
+            this.baseName = baseName;
             this.options = options;
             this.listener = listener;
+            this.regularPrice = findRegularPrice(baseName, options);
         }
 
         @NonNull
@@ -388,9 +408,62 @@ public class Customer extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             Product product = options.get(position);
-            holder.tvName.setText(product.getPName());
-            holder.tvPrice.setText(product.getPPrice() + "원");
+            holder.tvOptionLabel.setText(getOptionLabel(product.getPName()));
+            holder.tvOptionPrice.setText(product.getPPrice() + "원");
+            bindDiscountBadge(holder, product);
             holder.itemView.setOnClickListener(v -> listener.onSelect(product));
+        }
+
+        private void bindDiscountBadge(ViewHolder holder, Product product) {
+            String name = product.getPName();
+            if (name == null || !isBoxProduct(name) || regularPrice <= 0) {
+                holder.tvDiscountBadge.setVisibility(View.GONE);
+                return;
+            }
+
+            int regularTotal = regularPrice * BOX_UNIT_COUNT;
+            int discountPercent = Math.round((regularTotal - product.getPPrice()) * 100f / regularTotal);
+            if (discountPercent <= 0) {
+                holder.tvDiscountBadge.setText("박스상품");
+            } else {
+                holder.tvDiscountBadge.setText("일반상품보다 " + discountPercent + "% 저렴");
+            }
+            holder.tvDiscountBadge.setVisibility(View.VISIBLE);
+        }
+
+        private int findRegularPrice(String baseName, List<Product> options) {
+            for (Product option : options) {
+                String name = option.getPName();
+                if (name != null
+                        && !isBoxProduct(name)
+                        && normalizeOptionBaseName(name).equals(baseName)) {
+                    return option.getPPrice();
+                }
+            }
+            return 0;
+        }
+
+        private String getOptionLabel(String name) {
+            if (name == null || name.isBlank()) {
+                return "옵션";
+            }
+            if (isBoxProduct(name)) return "1박스";
+            if (normalizeOptionBaseName(name).equals(baseName)) return "일반상품";
+            if (name.contains("대용량")) return "대용량";
+            if (name.contains("소용량")) return "소용량";
+            if (name.contains("행사")) return "행사상품";
+            if (name.contains("세트")) return "세트";
+            if (name.contains("묶음")) return "묶음";
+            return name;
+        }
+
+        private String normalizeOptionBaseName(String name) {
+            return name.trim().replaceAll("\\(.*?\\)", "").trim();
+        }
+
+        private boolean isBoxProduct(String name) {
+            String normalized = name.toUpperCase();
+            return normalized.contains("BOX") || name.contains("박스");
         }
 
         @Override
@@ -399,12 +472,13 @@ public class Customer extends AppCompatActivity {
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvName, tvPrice;
+            TextView tvOptionLabel, tvOptionPrice, tvDiscountBadge;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
-                tvName = itemView.findViewById(R.id.tv_option_name);
-                tvPrice = itemView.findViewById(R.id.tv_option_price);
+                tvOptionLabel = itemView.findViewById(R.id.tv_option_label);
+                tvOptionPrice = itemView.findViewById(R.id.tv_option_price);
+                tvDiscountBadge = itemView.findViewById(R.id.tv_discount_badge);
             }
         }
     }

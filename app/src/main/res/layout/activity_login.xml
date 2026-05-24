@@ -89,7 +89,7 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#F4F5F8"
-                android:layout_marginBottom="28dp">
+                android:layout_marginBottom="12dp">
                 <EditText
                     android:id="@+id/et_login_pw"
                     android:layout_width="match_parent"
@@ -102,6 +102,15 @@
                     android:paddingHorizontal="16dp"
                     android:textSize="14sp" />
             </androidx.cardview.widget.CardView>
+
+            <CheckBox
+                android:id="@+id/cb_biometric_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="생체로그인 사용"
+                android:textColor="#333333"
+                android:textSize="14sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_login_submit"

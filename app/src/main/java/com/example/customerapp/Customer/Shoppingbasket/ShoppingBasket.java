@@ -146,7 +146,7 @@ public class ShoppingBasket extends AppCompatActivity {
                 return;
             }
 
-            Intent intent = new Intent(ShoppingBasket.this, PortOnePaymentWebViewActivity.class);
+            Intent intent = new Intent(ShoppingBasket.this, Payment.class);
             intent.putExtra("total_price", totalPrice);
             startActivity(intent);
         });

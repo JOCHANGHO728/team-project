@@ -9,8 +9,10 @@ import android.widget.Toast;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
@@ -143,6 +145,7 @@ public class BarcodeScan extends AppCompatActivity {
         }, ContextCompat.getMainExecutor(this));
     }
 
+    @OptIn(markerClass = ExperimentalGetImage.class)
     private void scanBarcode(BarcodeScanner scanner, ImageProxy imageProxy) {
         if (imageProxy.getImage() == null) {
             imageProxy.close();

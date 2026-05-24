@@ -13,8 +13,9 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "PORTONE_IMP_CODE", "\"imp03532732\"")
-        buildConfigField("String", "PORTONE_PG", "\"tosspay.tosstest\"")
-        buildConfigField("String", "PORTONE_CHANNEL_KEY", "\"channel-key-0f1adf77-79de-4121-89b7-f44dd5422cc2\"")
+        buildConfigField("String", "PORTONE_PG_TOSS", "\"tosspay.tosstest\"")
+        buildConfigField("String", "PORTONE_PG_KAKAO", "\"kakaopay.TC0ONETIME\"")
+        buildConfigField("String", "PORTONE_PG_PAYCO", "\"payco.PARTNERTEST\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -55,6 +56,8 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.3.0")
     implementation("androidx.camera:camera-lifecycle:1.3.0")
     implementation("androidx.camera:camera-view:1.3.0")
+    implementation("androidx.biometric:biometric:1.1.0")
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
