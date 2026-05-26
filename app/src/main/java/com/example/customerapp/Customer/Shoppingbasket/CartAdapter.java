@@ -45,9 +45,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.tvPrice.setText(product.getPPrice() + "원");
         holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
 
-        // 🔥 이미지 로딩 (서버 이미지 없으면 placeholder)
+        // 서버 이미지가 없거나 로딩에 실패하면 기본 이미지를 표시한다.
         Glide.with(holder.itemView.getContext())
-                .load(product.getImageUrl())  // Product 클래스에서 기본 URL 제공
+                .load(product.getImageUrl())
                 .placeholder(R.drawable.ic_placeholder)
                 .error(R.drawable.ic_placeholder)
                 .into(holder.ivProduct);

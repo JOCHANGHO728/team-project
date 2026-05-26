@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.example.customerapp.DataModel.Product;
 import com.example.customerapp.R;
 
@@ -44,6 +45,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Product product = productList.get(position);
         holder.tvName.setText(product.getPName());
         holder.tvPrice.setText(product.getPPrice() + "원");
+        Glide.with(holder.itemView.getContext())
+                .load(product.getImageUrl())
+                .placeholder(R.drawable.ic_placeholder)
+                .error(R.drawable.ic_placeholder)
+                .into(holder.ivProduct);
         holder.itemView.setOnClickListener(v -> {
             if (productClickListener != null) {
                 productClickListener.onProductClick(product);
@@ -71,9 +77,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvPrice;
-        ImageView btnPlus;
+        ImageView ivProduct, btnPlus;
         public ViewHolder(View itemView) {
             super(itemView);
+            ivProduct = itemView.findViewById(R.id.ivProduct);
             tvName = itemView.findViewById(R.id.tvName);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             btnPlus = itemView.findViewById(R.id.btnPlus);
