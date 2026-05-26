@@ -11,6 +11,7 @@ public class ProductResponseDto {
     private int pQuantity;
     private String bKey;      // 수정: 누락된 bKey(바코드) 필드 추가
     private String category;
+    private String imageUrl;
 
     public ProductResponseDto(Product product) {
         this.pId = product.getPId();
@@ -19,5 +20,6 @@ public class ProductResponseDto {
         this.pQuantity = product.getPQuantity();
         this.bKey = product.getBKey();  // 수정: bKey 매핑 추가
         this.category = product.getCategory();
+        this.imageUrl = product.getImageUrl();
     }
 }

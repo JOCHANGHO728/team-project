@@ -25,5 +25,8 @@ public class Product {
     @Column(name = "b_key")
     private String bKey;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     private String category;
 }
