@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.customerapp.Customer.Shopping.ProductAdapter;
 import com.example.customerapp.DataModel.ApiResponse;
 import com.example.customerapp.DataModel.CartManager;
@@ -253,6 +255,7 @@ public class Customer extends AppCompatActivity {
 
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_product_options, null, false);
         TextView tvTitle = dialogView.findViewById(R.id.tv_option_title);
+        ImageView ivSelectedProduct = dialogView.findViewById(R.id.iv_selected_product);
         TextView tvSelectedName = dialogView.findViewById(R.id.tv_selected_name);
         TextView tvSelectedPrice = dialogView.findViewById(R.id.tv_selected_price);
         RecyclerView rvOptions = dialogView.findViewById(R.id.rv_option_list);
@@ -262,7 +265,7 @@ public class Customer extends AppCompatActivity {
         rvOptions.setLayoutManager(new GridLayoutManager(this, 2));
 
         final Product[] selectedOption = {selectedProduct};
-        updateSelectedProductPreview(tvSelectedName, tvSelectedPrice, selectedOption[0]);
+        updateSelectedProductPreview(ivSelectedProduct, tvSelectedName, tvSelectedPrice, selectedOption[0]);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setView(dialogView)
@@ -270,7 +273,7 @@ public class Customer extends AppCompatActivity {
 
         VariantOptionAdapter optionAdapter = new VariantOptionAdapter(baseName, sameNameProducts, product -> {
             selectedOption[0] = product;
-            updateSelectedProductPreview(tvSelectedName, tvSelectedPrice, product);
+            updateSelectedProductPreview(ivSelectedProduct, tvSelectedName, tvSelectedPrice, product);
         });
         rvOptions.setAdapter(optionAdapter);
         btnAddSelectedProduct.setOnClickListener(v -> {
@@ -281,7 +284,12 @@ public class Customer extends AppCompatActivity {
         dialog.show();
     }
 
-    private void updateSelectedProductPreview(TextView tvName, TextView tvPrice, Product product) {
+    private void updateSelectedProductPreview(ImageView ivProduct, TextView tvName, TextView tvPrice, Product product) {
+        Glide.with(this)
+                .load(product.getImageUrl())
+                .placeholder(R.drawable.ic_placeholder)
+                .error(R.drawable.ic_placeholder)
+                .into(ivProduct);
         tvName.setText(product.getPName());
         tvPrice.setText(product.getPPrice() + "원");
     }
@@ -409,6 +417,11 @@ public class Customer extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             Product product = options.get(position);
+            Glide.with(holder.itemView.getContext())
+                    .load(product.getImageUrl())
+                    .placeholder(R.drawable.ic_placeholder)
+                    .error(R.drawable.ic_placeholder)
+                    .into(holder.ivOptionProduct);
             holder.tvOptionLabel.setText(getOptionLabel(product.getPName()));
             holder.tvOptionPrice.setText(product.getPPrice() + "원");
             bindDiscountBadge(holder, product);
@@ -473,10 +486,12 @@ public class Customer extends AppCompatActivity {
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
+            ImageView ivOptionProduct;
             TextView tvOptionLabel, tvOptionPrice, tvDiscountBadge;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
+                ivOptionProduct = itemView.findViewById(R.id.iv_option_product);
                 tvOptionLabel = itemView.findViewById(R.id.tv_option_label);
                 tvOptionPrice = itemView.findViewById(R.id.tv_option_price);
                 tvDiscountBadge = itemView.findViewById(R.id.tv_discount_badge);
