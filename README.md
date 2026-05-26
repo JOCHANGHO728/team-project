@@ -52,6 +52,23 @@ Spring Boot 기반 쇼핑몰 REST API 서버입니다. Android 클라이언트�
 ### 3) 상품 API (`/api/v1/products`)
 - `GET ?category=`: 카테고리별 상품 조회
 - `GET /search?keyword=`: 키워드 상품 검색
+- 상품 조회 응답에는 Cloudinary 상품 이미지 주소인 `imageUrl`이 포함됩니다.
+
+상품 조회 응답 예시:
+
+```json
+{
+  "pId": 1,
+  "pName": "농심 새우깡 90g",
+  "pPrice": 1500,
+  "pQuantity": 10,
+  "bKey": "880000000001",
+  "category": "과자",
+  "imageUrl": "https://res.cloudinary.com/example/product.webp"
+}
+```
+
+DB의 `productdb.image_url` 컬럼에 저장된 URL이 API의 `imageUrl`로 반환됩니다.
 
 ### 4) 주문 API (`/api/v1/orders`)
 - `POST /`: 주문 생성
@@ -80,3 +97,9 @@ cd server
 ./gradlew test
 ./gradlew bootRun
 ```
+
+## 상품 이미지 응답 관련 파일
+
+- `server/src/main/java/com/example/server/entity/Product.java`: DB `image_url` 컬럼 매핑
+- `server/src/main/java/com/example/server/dto/ProductResponseDto.java`: 상품 API 응답에 `imageUrl` 포함
+- `server/src/test/java/com/example/server/dto/ProductResponseDtoTest.java`: 이미지 URL 응답 매핑 검증
