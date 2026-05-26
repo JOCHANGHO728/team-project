@@ -11,10 +11,12 @@
 - 상품 조회
   - 카테고리별 상품 목록 조회
   - 상품 검색
+  - Cloudinary 상품 이미지 표시
   - 일반상품 / 1박스 / 대용량 / 행사상품 등 옵션 선택
   - 1박스 상품 할인율 표시
 - 장바구니
   - 상품 추가 / 수량 변경 / 삭제
+  - 상품 이미지 표시
   - 총 결제 금액 계산
 - 바코드 스캔
   - CameraX + ML Kit Barcode Scanning 사용
@@ -108,6 +110,27 @@ https://server-jc54.onrender.com/
 | 전체 구매내역 조회 | GET | `/api/v1/purchase-history/{uId}` |
 | 기간별 구매내역 조회 | GET | `/api/v1/purchase-history/{uId}/range` |
 
+## 상품 이미지 표시
+
+상품 조회 API 응답의 `imageUrl` 값을 Glide로 불러와 상품 목록과 장바구니에 표시합니다.
+이미지 URL이 없거나 로드에 실패하면 `ic_placeholder` 기본 이미지가 표시됩니다.
+
+서버 응답 예시:
+
+```json
+{
+  "pId": 1,
+  "pName": "농심 새우깡 90g",
+  "imageUrl": "https://res.cloudinary.com/example/product.webp"
+}
+```
+
+관련 파일:
+
+- `app/src/main/java/com/example/customerapp/DataModel/Product.java`: `imageUrl` / `image_url` 응답 매핑
+- `app/src/main/java/com/example/customerapp/Customer/Shopping/ProductAdapter.java`: 상품 목록 이미지 로딩
+- `app/src/main/java/com/example/customerapp/Customer/Shoppingbasket/CartAdapter.java`: 장바구니 이미지 로딩
+
 ## 결제 설정
 
 PortOne 테스트 결제를 사용합니다.
@@ -199,6 +222,8 @@ Lint 확인:
 3. 상품 클릭 후 옵션 선택
 4. 장바구니 담기
 5. 장바구니에서 수량 변경 및 삭제 확인
+6. 상품 목록과 장바구니에서 상품 이미지 표시 확인
+7. 이미지가 없는 상품은 기본 이미지가 표시되는지 확인
 
 ### 바코드 스캔
 
