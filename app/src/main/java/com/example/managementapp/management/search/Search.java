@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -29,7 +30,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Search extends AppCompatActivity {
     // 서버 주소
-    private static final String BASE_URL = "https://server-jc54.onrender.com";
+    private static final String BASE_URL = "https://server-jc54.onrender.com/";
     private ActivitySearchBinding binding;
     private ProductAdapter adapter;   // 🔥 추가: 어댑터 선언
     private ProductResponse selectedProduct;
@@ -62,9 +63,16 @@ public class Search extends AppCompatActivity {
         // 상품조회 기능
         binding.search.setOnClickListener(v -> {
             String id = binding.productID.getText().toString();
+            String token = getSharedPreferences("auth", MODE_PRIVATE)
+                    .getString("managerToken", "");
+
+            if (token.isEmpty()) {
+                Toast.makeText(Search.this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             // 🔥 ApiResponse<List<ProductResponse>> 로 받도록 수정
-            searchApi.search(id).enqueue(new Callback<ApiResponse<List<ProductResponse>>>() {
+            searchApi.search("Bearer " + token, id).enqueue(new Callback<ApiResponse<List<ProductResponse>>>() {
                 @Override
                 public void onResponse(Call<ApiResponse<List<ProductResponse>>> call,
                                        Response<ApiResponse<List<ProductResponse>>> response) {
@@ -76,6 +84,10 @@ public class Search extends AppCompatActivity {
                         if (apiResponse.isSuccess()) {
                             // 🔥 실제 상품 리스트는 apiResponse.data 에 있음
                             List<ProductResponse> products = apiResponse.getData();
+                            if (products == null) {
+                                Toast.makeText(Search.this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
 
                             Log.d("Connect_SUCCESS", "상품 개수: " + products.size());
 

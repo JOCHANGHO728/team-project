@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Change extends AppCompatActivity {
     // 서버 주소
-    private static final String BASE_URL = "https://server-jc54.onrender.com";
+    private static final String BASE_URL = "https://server-jc54.onrender.com/";
     private ActivityChangeBinding binding;
 
     @Override

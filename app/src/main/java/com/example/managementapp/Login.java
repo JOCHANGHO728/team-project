@@ -64,21 +64,25 @@ public class Login extends AppCompatActivity {
                 public void onResponse(Call<ApiResponse<ManagerAuthResponse>> call,
                                        Response<ApiResponse<ManagerAuthResponse>> response) {
 
-                    if (response.isSuccessful() && response.body() != null) {
+                    if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
 
                         ApiResponse<ManagerAuthResponse> apiResponse = response.body();
                         ManagerAuthResponse data = apiResponse.getData();
 
-                        if (data != null) {
+                        if (data != null && data.getAccessToken() != null) {
                             String managerName = data.getManagerName();
                             String token = data.getAccessToken();
+
+                            getSharedPreferences("auth", MODE_PRIVATE)
+                                    .edit()
+                                    .putString("managerToken", token)
+                                    .apply();
 
                             Toast.makeText(Login.this,
                                     "로그인 성공: " + managerName + "님 환영합니다!",
                                     Toast.LENGTH_SHORT).show();
 
                             Intent intent = new Intent(Login.this, Management.class);
-                            intent.putExtra("token", token);
                             startActivity(intent);
                         } else {
                             Toast.makeText(Login.this, "로그인 실패: 데이터 없음", Toast.LENGTH_SHORT).show();
