@@ -18,7 +18,7 @@ public interface ApiService {
 
     // 관리자 로그인
     @POST("/api/v1/managers/login")
-    Call<String> login(@Body LoginRequest request);
+    Call<ApiResponse<ManagerAuthResponse>> login(@Body LoginRequest request);
 
     // 상품 조회
     @GET("/api/v1/managers/products/search")
