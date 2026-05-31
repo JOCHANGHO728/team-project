@@ -34,6 +34,12 @@ public class Management extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // 상품 등록
+        binding.btnRegistration.setOnClickListener(v -> {
+            Intent intent = new Intent(Management.this, ProductRegistration.class);
+            startActivity(intent);
+        });
+
         // 데이터 베이스 추천(ai 기능)
         binding.suggest.setOnClickListener(v -> {
 

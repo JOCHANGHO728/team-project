@@ -24,7 +24,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Update extends AppCompatActivity {
-    private static final String BASE_URL = "https://server-jc54.onrender.com";
+    private static final String BASE_URL = "https://server-jc54.onrender.com/";
 
     private ActivityChangeBinding binding;
     private ProductResponse product;
@@ -82,7 +82,15 @@ public class Update extends AppCompatActivity {
         ProductUpdateRequest request = new ProductUpdateRequest(newPrice, newQuantity);
         Log.d("UPDATE_REQ", "pId=" + product.getP_id() + ", body=" + new Gson().toJson(request));
 
-        apiService.updateProduct(product.getP_id(), request).enqueue(new Callback<ApiResponse<Void>>() {
+        String token = getSharedPreferences("auth", MODE_PRIVATE)
+                .getString("managerToken", "");
+
+        if (token.isEmpty()) {
+            Toast.makeText(this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        apiService.updateProduct("Bearer " + token, product.getP_id(), request).enqueue(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 Log.d("UPDATE_RES", "code=" + response.code() + ", body=" + new Gson().toJson(response.body()));

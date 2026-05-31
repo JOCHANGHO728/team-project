@@ -79,7 +79,7 @@
                     app:iconTint="#111111" />
 
             <com.google.android.material.button.MaterialButton
-                    android:id="@+id/unregistered_scan"
+                    android:id="@+id/btn_registration"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="match_parent"
                     android:layout_height="64dp"

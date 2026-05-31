@@ -6,36 +6,42 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
-
-    // 회원가입(미사용 기능)
-    @POST("register")
-    Call<SignUpResponse> register(@Body SignUpRequest request);
-
     // 관리자 로그인
     @POST("/api/v1/managers/login")
-    Call<String> login(@Body LoginRequest request);
+    Call<ApiResponse<ManagerAuthResponse>> login(@Body LoginRequest request);
 
     // 상품 조회
     @GET("/api/v1/managers/products/search")
-    Call<ApiResponse<List<ProductResponse>>> search(@Query("name") String keyword);
+    Call<ApiResponse<List<ProductResponse>>> search(
+            @Header("Authorization") String authorization,
+            @Query("name") String keyword
+    );
 
     // 상품 추가
     @POST("/api/v1/managers/products")
-    Call<String> addProduct(@Body ProductCreateRequest request);
+    Call<ApiResponse<Void>> addProduct(
+            @Header("Authorization") String authorization,
+            @Body ProductCreateRequest request
+    );
 
     // 상품 수정
     @PUT("/api/v1/managers/products/{pId}")
     Call<ApiResponse<Void>> updateProduct(
+            @Header("Authorization") String authorization,
             @Path("pId") Long productId,
             @Body ProductUpdateRequest request
     );
 
     // 상품 삭제
     @DELETE("/api/v1/managers/products/{pId}")
-    Call<String> deleteProduct(@Path("pId") Long productId);
+    Call<ApiResponse<Void>> deleteProduct(
+            @Header("Authorization") String authorization,
+            @Path("pId") Long productId
+    );
 }
