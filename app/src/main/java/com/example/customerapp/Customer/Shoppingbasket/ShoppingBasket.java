@@ -41,9 +41,7 @@ public class ShoppingBasket extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> barcodeLauncher;
     private CartAdapter cartAdapter;
-
-    // 🔥 장바구니를 유지하는 전역 리스트
-    private List<CartItem> cartItems = new ArrayList<>();
+    private final List<CartItem> cartItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +49,6 @@ public class ShoppingBasket extends AppCompatActivity {
         binding = ActivityShoppingBasketBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(ScalarsConverterFactory.create())
@@ -59,86 +56,39 @@ public class ShoppingBasket extends AppCompatActivity {
                 .build();
         ApiService api = retrofit.create(ApiService.class);
 
-        // RecyclerView
         cartAdapter = new CartAdapter();
-        cartAdapter.setOnCartChangeListener(() -> updateTotalPrice());
+        cartAdapter.setOnCartChangeListener(this::updateTotalPrice);
         binding.rvCartList.setAdapter(cartAdapter);
         syncCartFromManager();
 
-        // 🔥 스캔 결과 런처
         barcodeLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
+                    if (result.getResultCode() != RESULT_OK || result.getData() == null) {
+                        return;
+                    }
 
-                            HashMap<String, Integer> scannedItems =
-                                    (HashMap<String, Integer>) data.getSerializableExtra("scannedItems");
+                    HashMap<String, Integer> scannedItems =
+                            (HashMap<String, Integer>) result.getData().getSerializableExtra("scannedItems");
 
-                            if (scannedItems != null && !scannedItems.isEmpty()) {
+                    if (scannedItems == null || scannedItems.isEmpty()) {
+                        Log.d("SHOPPING_BASKET", "스캔된 바코드 없음");
+                        return;
+                    }
 
-                                Log.d("SHOPPING_BASKET", "받은 바코드 목록: " + scannedItems.toString());
-
-                                // 🔥 새로 스캔한 바코드들 처리
-                                for (String barcode : scannedItems.keySet()) {
-
-                                    int qty = scannedItems.get(barcode);
-
-                                    api.searchByBarcode(barcode).enqueue(new Callback<ApiResponse<Product>>() {
-                                        @Override
-                                        public void onResponse(Call<ApiResponse<Product>> call, Response<ApiResponse<Product>> response) {
-                                            if (response.isSuccessful() && response.body() != null) {
-
-                                                Product product = response.body().getData();
-
-                                                // 🔥 product가 null이면 DB에 없는 상품
-                                                if (product == null) {
-                                                    Toast.makeText(
-                                                            ShoppingBasket.this,
-                                                            "등록되지 않은 상품입니다: " + barcode,
-                                                            Toast.LENGTH_SHORT
-                                                    ).show();
-                                                    return;
-                                                }
-
-                                                for (int i = 0; i < qty; i++) {
-                                                    CartManager.getInstance().addItem(product);
-                                                }
-
-                                                syncCartFromManager();
-
-                                            } else {
-                                                Toast.makeText(
-                                                        ShoppingBasket.this,
-                                                        "등록되지 않은 상품입니다: " + barcode,
-                                                        Toast.LENGTH_SHORT
-                                                ).show();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<ApiResponse<Product>> call, Throwable t) {
-                                            Log.e("SERVER", "서버 오류: " + t.getMessage());
-                                        }
-                                    });
-                                }
-
-                            } else {
-                                Log.d("SHOPPING_BASKET", "스캔된 바코드 없음");
-                            }
-                        }
+                    Log.d("SHOPPING_BASKET", "받은 바코드 목록: " + scannedItems);
+                    for (String barcode : scannedItems.keySet()) {
+                        Integer qty = scannedItems.get(barcode);
+                        addScannedBarcodeToCart(api, barcode, qty == null ? 1 : qty);
                     }
                 }
         );
 
-        // 스캔 버튼
         binding.btnBarcodeScan.setOnClickListener(v -> {
             Intent intent = new Intent(ShoppingBasket.this, BarcodeScan.class);
             barcodeLauncher.launch(intent);
         });
 
-        // 결제 버튼
         binding.btnOrder.setOnClickListener(v -> {
             int totalPrice = calculateTotalPrice();
             if (totalPrice <= 0) {
@@ -157,7 +107,6 @@ public class ShoppingBasket extends AppCompatActivity {
             return insets;
         });
 
-        // 하단 네비게이션 바 설정
         binding.bottomNavigation.setSelectedItemId(R.id.nav_cart);
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -183,11 +132,81 @@ public class ShoppingBasket extends AppCompatActivity {
         });
     }
 
+    private void addScannedBarcodeToCart(ApiService api, String barcode, int qty) {
+        String normalizedBarcode = barcode == null ? "" : barcode.trim();
+        if (normalizedBarcode.isEmpty()) {
+            return;
+        }
+
+        api.searchByBarcode(normalizedBarcode).enqueue(new Callback<ApiResponse<Product>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Product>> call, Response<ApiResponse<Product>> response) {
+                if (response.isSuccessful()
+                        && response.body() != null
+                        && response.body().isSuccess()
+                        && response.body().getData() != null) {
+                    addProductToCart(response.body().getData(), qty);
+                    return;
+                }
+
+                findProductByBarcodeFromProductList(api, normalizedBarcode, qty);
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Product>> call, Throwable t) {
+                Log.e("SERVER", "바코드 상품 조회 실패: " + t.getMessage());
+                findProductByBarcodeFromProductList(api, normalizedBarcode, qty);
+            }
+        });
+    }
+
+    private void findProductByBarcodeFromProductList(ApiService api, String barcode, int qty) {
+        api.searchProducts("").enqueue(new Callback<ApiResponse<List<Product>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<Product>>> call, Response<ApiResponse<List<Product>>> response) {
+                if (!response.isSuccessful()
+                        || response.body() == null
+                        || !response.body().isSuccess()
+                        || response.body().getData() == null) {
+                    showBarcodeNotFound(barcode);
+                    return;
+                }
+
+                for (Product product : response.body().getData()) {
+                    String productBarcode = product.getBKey();
+                    if (productBarcode != null && productBarcode.trim().equals(barcode)) {
+                        addProductToCart(product, qty);
+                        return;
+                    }
+                }
+
+                showBarcodeNotFound(barcode);
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<Product>>> call, Throwable t) {
+                Log.e("SERVER", "전체 상품 조회 실패: " + t.getMessage());
+                showBarcodeNotFound(barcode);
+            }
+        });
+    }
+
+    private void addProductToCart(Product product, int qty) {
+        for (int i = 0; i < qty; i++) {
+            CartManager.getInstance().addItem(product);
+        }
+        syncCartFromManager();
+        Toast.makeText(this, product.getPName() + " 장바구니 추가", Toast.LENGTH_SHORT).show();
+    }
+
+    private void showBarcodeNotFound(String barcode) {
+        Toast.makeText(this, "등록되지 않은 상품입니다: " + barcode, Toast.LENGTH_SHORT).show();
+    }
+
     private void updateTotalPrice() {
         int total = calculateTotalPrice();
-
         binding.tvTotalPrice.setText("총 금액: " + total + "원");
-        binding.tvScannedPrice.setText("₩ " + total);
+        binding.tvScannedPrice.setText("₩" + total);
     }
 
     private int calculateTotalPrice() {
@@ -214,5 +233,4 @@ public class ShoppingBasket extends AppCompatActivity {
         cartAdapter.setData(cartItems);
         updateTotalPrice();
     }
-
 }
