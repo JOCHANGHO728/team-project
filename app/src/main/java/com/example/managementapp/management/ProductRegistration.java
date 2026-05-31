@@ -36,7 +36,6 @@ public class ProductRegistration extends AppCompatActivity {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiService CreateApi = retrofit.create(ApiService.class);
@@ -65,6 +64,7 @@ public class ProductRegistration extends AppCompatActivity {
 
             // 로그로 확인
             Log.d("ProductRegister", "생성된 객체: " + request.toString());
+            Log.d("ProductRegister", "바코드 입력값: [" + barcode + "]");
 
             // 🔥 로그인에서 저장한 토큰 불러오기
             String token = getSharedPreferences("auth", MODE_PRIVATE)
@@ -77,7 +77,7 @@ public class ProductRegistration extends AppCompatActivity {
 
             String authHeader = "Bearer " + token;
             // 🔥 서버에 전송
-            CreateApi.addProduct(token, request).enqueue(new retrofit2.Callback<ApiResponse<Void>>() {
+            CreateApi.addProduct(authHeader, request).enqueue(new retrofit2.Callback<ApiResponse<Void>>() {
                 @Override
                 public void onResponse(Call<ApiResponse<Void>> call, retrofit2.Response<ApiResponse<Void>> response) {
                     if (response.isSuccessful()) {

@@ -20,4 +20,15 @@ public class ProductCreateRequest {
         this.bKey = bKey;
         this.category = category;
     }
+
+    @Override
+    public String toString() {
+        return "ProductCreateRequest{" +
+                "pName='" + pName + '\'' +
+                ", pPrice=" + pPrice +
+                ", pQuantity=" + pQuantity +
+                ", bKey='" + bKey + '\'' +
+                ", category='" + category + '\'' +
+                '}';
+    }
 }
