@@ -63,12 +63,12 @@
                 app:implementationMode="compatible" />
 
             <View
-                android:id="@+id/scanGuide"
-                android:layout_width="145dp"
-                android:layout_height="118dp"
-                android:layout_gravity="center"
-                android:elevation="10dp"
-                android:background="@drawable/scan_guide_box" />
+                    android:id="@+id/scanGuide"
+                    android:layout_width="184dp"
+                    android:layout_height="134dp"
+                    android:layout_gravity="center"
+                    android:elevation="10dp"
+                    android:background="@drawable/scan_guide_box"/>
         </FrameLayout>
 
         <!-- 안내 텍스트 -->

@@ -47,6 +47,8 @@ import retrofit2.Response;
 
 public class Customer extends AppCompatActivity {
 
+    private static final String ALL_PRODUCTS_CATEGORY = "전체상품";
+
     private RecyclerView rvCategory, rvProductList;
     private ProductAdapter productAdapter;
     private CategoryAdapter categoryAdapter;
@@ -77,7 +79,7 @@ public class Customer extends AppCompatActivity {
         categoryAdapter = new CategoryAdapter(new ArrayList<>(), categoryName -> {
             currentCategory = categoryName;
             svProductSearch.setQuery("", false);
-            loadProductsByCategory(categoryName);
+            loadProductsForCategory(categoryName);
         });
         rvCategory.setAdapter(categoryAdapter);
         productAdapter = createProductAdapter(new ArrayList<>());
@@ -161,7 +163,9 @@ public class Customer extends AppCompatActivity {
                             }
                         }
 
-                        List<String> categories = new ArrayList<>(categorySet);
+                        List<String> categories = new ArrayList<>();
+                        categories.add(ALL_PRODUCTS_CATEGORY);
+                        categories.addAll(categorySet);
                         if (categories.isEmpty()) {
                             Toast.makeText(Customer.this, "카테고리 정보가 없습니다.", Toast.LENGTH_SHORT).show();
                             return;
@@ -170,12 +174,12 @@ public class Customer extends AppCompatActivity {
                         categoryAdapter = new CategoryAdapter(categories, categoryName -> {
                             currentCategory = categoryName;
                             svProductSearch.setQuery("", false);
-                            loadProductsByCategory(categoryName);
+                            loadProductsForCategory(categoryName);
                         });
                         rvCategory.setAdapter(categoryAdapter);
 
-                        currentCategory = categories.get(0);
-                        loadProductsByCategory(currentCategory);
+                        currentCategory = ALL_PRODUCTS_CATEGORY;
+                        showAllProducts();
                     }
 
                     @Override
@@ -183,6 +187,20 @@ public class Customer extends AppCompatActivity {
                         Toast.makeText(Customer.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void loadProductsForCategory(String categoryName) {
+        if (ALL_PRODUCTS_CATEGORY.equals(categoryName)) {
+            showAllProducts();
+        } else {
+            loadProductsByCategory(categoryName);
+        }
+    }
+
+    private void showAllProducts() {
+        currentCategoryProducts.clear();
+        currentCategoryProducts.addAll(allProducts);
+        refreshDisplayProducts("");
     }
 
     private void loadProductsByCategory(String categoryName) {
