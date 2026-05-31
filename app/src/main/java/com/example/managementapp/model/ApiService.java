@@ -1,6 +1,7 @@
 package com.example.managementapp.model;
 
 import java.util.List;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -27,7 +28,7 @@ public interface ApiService {
     @POST("/api/v1/managers/products")
     Call<ApiResponse<Void>> addProduct(
             @Header("Authorization") String authorization,
-            @Body ProductCreateRequest request
+            @Body RequestBody request
     );
 
     // 상품 수정

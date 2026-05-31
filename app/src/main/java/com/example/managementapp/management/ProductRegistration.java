@@ -15,17 +15,27 @@ import com.example.managementapp.R;
 import com.example.managementapp.databinding.ActivityProductRegistarationBinding;
 import com.example.managementapp.model.ApiResponse;
 import com.example.managementapp.model.ApiService;
-import com.example.managementapp.model.ProductCreateRequest;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class ProductRegistration extends AppCompatActivity {
-    // 서버 주소
     private static final String BASE_URL = "https://server-jc54.onrender.com/";
+    private static final String TAG = "ProductRegister";
+    private static final MediaType JSON_MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
+
     private ActivityProductRegistarationBinding binding;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,67 +48,14 @@ public class ProductRegistration extends AppCompatActivity {
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        ApiService CreateApi = retrofit.create(ApiService.class);
+        apiService = retrofit.create(ApiService.class);
 
-        // 상품 등록
-        binding.btnRegister.setOnClickListener(v -> {
-            // EditText 값 가져오기
-            String barcode = binding.editBarcode.getText().toString().trim();
-            String name = binding.editName.getText().toString().trim();
-            String priceText = binding.editPrice.getText().toString().trim();
-            String amountText = binding.editAmount.getText().toString().trim();
-            String category = binding.editCategory.getText().toString().trim();
+        binding.btnRegister.setOnClickListener(v -> registerProduct());
 
-            // 숫자 변환
-            int price = priceText.isEmpty() ? 0 : Integer.parseInt(priceText);
-            int quantity = amountText.isEmpty() ? 0 : Integer.parseInt(amountText);
-
-            // ProductCreateRequest 객체 생성
-            ProductCreateRequest request = new ProductCreateRequest(
-                    name,       // pName
-                    price,      // pPrice
-                    quantity,   // pQuantity
-                    barcode,    // bKey
-                    category    // category
-            );
-
-            // 로그로 확인
-            Log.d("ProductRegister", "생성된 객체: " + request.toString());
-            Log.d("ProductRegister", "바코드 입력값: [" + barcode + "]");
-
-            // 🔥 로그인에서 저장한 토큰 불러오기
-            String token = getSharedPreferences("auth", MODE_PRIVATE)
-                    .getString("managerToken", null);
-
-            if (token == null) {
-                Toast.makeText(this, "토큰이 없습니다. 다시 로그인하세요.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            String authHeader = "Bearer " + token;
-            // 🔥 서버에 전송
-            CreateApi.addProduct(authHeader, request).enqueue(new retrofit2.Callback<ApiResponse<Void>>() {
-                @Override
-                public void onResponse(Call<ApiResponse<Void>> call, retrofit2.Response<ApiResponse<Void>> response) {
-                    if (response.isSuccessful()) {
-                        Log.d("ProductRegister", "상품 등록 성공");
-                    } else {
-                        Log.e("ProductRegister", "상품 등록 실패: " + response.code());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
-                    Log.e("ProductRegister", "서버 통신 오류: " + t.getMessage());
-                }
-            });
-
-        });
-
-        // 관리 메뉴로 돌아가기
         binding.btnBack.setOnClickListener(v -> {
             Intent intent = new Intent(ProductRegistration.this, Management.class);
             startActivity(intent);
+            finish();
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -106,5 +63,127 @@ public class ProductRegistration extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    private void registerProduct() {
+        String barcode = binding.editBarcode.getText().toString().trim();
+        String name = binding.editName.getText().toString().trim();
+        String priceText = binding.editPrice.getText().toString().trim();
+        String amountText = binding.editAmount.getText().toString().trim();
+        String category = binding.editCategory.getText().toString().trim();
+
+        if (barcode.isEmpty()) {
+            showMessage("바코드를 입력하세요.");
+            return;
+        }
+
+        if (name.isEmpty()) {
+            showMessage("상품명을 입력하세요.");
+            return;
+        }
+
+        if (priceText.isEmpty()) {
+            showMessage("가격을 입력하세요.");
+            return;
+        }
+
+        if (amountText.isEmpty()) {
+            showMessage("수량을 입력하세요.");
+            return;
+        }
+
+        if (category.isEmpty()) {
+            showMessage("카테고리를 입력하세요.");
+            return;
+        }
+
+        int price;
+        int quantity;
+        try {
+            price = Integer.parseInt(priceText);
+            quantity = Integer.parseInt(amountText);
+        } catch (NumberFormatException e) {
+            showMessage("가격과 수량은 숫자로 입력하세요.");
+            return;
+        }
+
+        RequestBody request;
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("pName", name);
+            jsonObject.put("pPrice", price);
+            jsonObject.put("pQuantity", quantity);
+            jsonObject.put("bKey", barcode);
+            jsonObject.put("category", category);
+
+            String requestJson = jsonObject.toString();
+            Log.e(TAG, "request json=" + requestJson);
+            request = RequestBody.create(JSON_MEDIA_TYPE, requestJson);
+        } catch (JSONException e) {
+            showMessage("상품 정보를 만들 수 없습니다.");
+            Log.e(TAG, "failed to create product json", e);
+            return;
+        }
+
+        String token = getSharedPreferences("auth", MODE_PRIVATE)
+                .getString("managerToken", "");
+
+        if (token.isEmpty()) {
+            showMessage("로그인이 필요합니다. 다시 로그인하세요.");
+            return;
+        }
+
+        apiService.addProduct("Bearer " + token, request).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (response.isSuccessful()
+                        && response.body() != null
+                        && response.body().isSuccess()) {
+                    showMessage("상품이 등록되었습니다.");
+                    clearInputs();
+                    return;
+                }
+
+                String message = getErrorMessage(response);
+                showMessage(message);
+                Log.e(TAG, message);
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                showMessage("서버 통신 오류: " + t.getMessage());
+                Log.e(TAG, "server error", t);
+            }
+        });
+    }
+
+    private String getErrorMessage(Response<ApiResponse<Void>> response) {
+        if (response.body() != null && response.body().getMessage() != null) {
+            return response.body().getMessage();
+        }
+
+        if (response.errorBody() != null) {
+            try {
+                String errorJson = response.errorBody().string();
+                Log.e(TAG, "error body=" + errorJson);
+                return "상품 등록 실패: " + response.code();
+            } catch (IOException e) {
+                Log.e(TAG, "failed to read error body", e);
+            }
+        }
+
+        return "상품 등록 실패: " + response.code();
+    }
+
+    private void clearInputs() {
+        binding.editBarcode.setText("");
+        binding.editName.setText("");
+        binding.editPrice.setText("");
+        binding.editAmount.setText("");
+        binding.editCategory.setText("");
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
