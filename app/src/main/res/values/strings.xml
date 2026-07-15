@@ -1,11 +1,79 @@
 <resources>
     <string name="app_name">CustomerApp</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <!-- Common -->
+    <string name="price_format">%,d원</string>
+    <string name="network_error">네트워크 오류: %1$s</string>
+    <string name="ok">확인</string>
+    <string name="back">뒤로가기</string>
+    <string name="customer_app_title">CUSTOMER APP</string>
+    
+    <!-- Customer Activity -->
+    <string name="option_select_title">%1$s 옵션 선택</string>
+    <string name="discount_badge">일반상품보다 %1$d%% 저렴</string>
+    <string name="box_product">박스상품</string>
+    <string name="added_to_cart">장바구니에 추가되었습니다.</string>
+    <string name="product_added">%1$s 추가</string>
+    <string name="category_load_failed">카테고리 조회 실패</string>
+    <string name="no_registered_products">등록된 상품이 없습니다.</string>
+    <string name="no_category_info">카테고리 정보가 없습니다.</string>
+    
+    <!-- Barcode Scan -->
+    <string name="barcode_scan_title">BARCODE SCAN</string>
+    <string name="align_barcode_hint">바코드를 스캔 영역에 맞춰주세요</string>
+    <string name="scanned_barcode_msg">스캔된 바코드: %1$s</string>
+    <string name="scanned_product_msg">가격: %1$,d원 / 바코드: %2$s</string>
+    <string name="unregistered_product_msg">등록되지 않은 상품입니다: %1$s</string>
+    <string name="add_to_cart_btn">담기</string>
+    <string name="scan_next_barcode">다음 바코드를 스캔해주세요</string>
+    <string name="camera_permission_required">카메라 권한이 필요합니다.</string>
+    <string name="product_put_in_cart">상품을 담았습니다.</string>
+    
+    <!-- Household Ledger -->
+    <string name="ledger_title">가계부</string>
+    <string name="prev_month">이전 달</string>
+    <string name="next_month">다음 달</string>
+    <string name="month_total_amount_title">이번 달 총 금액</string>
+    <string name="ledger_detail_search">세부 날짜 조회</string>
+    <string name="month_title">%1$s월</string>
+    <string name="no_purchase_history">%1$s년 %2$s월 구매 내역이 없습니다.</string>
+    <string name="order_id_format">주문번호 #%1$s</string>
+    <string name="total_amount_format">합계 %1$s원</string>
+    <string name="search_date_setting">조회 날짜 설정</string>
+    <string name="search_date">조회 날짜</string>
+    <string name="end_date">종료 날짜</string>
+    <string name="select_date_hint">연도-월-일 선택</string>
+    <string name="do_search">조회하기</string>
+    <string name="reset_date">날짜 초기화</string>
+    <string name="search_result">조회 결과</string>
+    
+    <!-- Login & SignUp -->
+    <string name="login">로그인</string>
+    <string name="signup">회원가입</string>
+    <string name="id_label">아이디</string>
+    <string name="id_hint">아이디를 입력하세요</string>
+    <string name="password_label">비밀번호</string>
+    <string name="password_hint">비밀번호를 입력하세요</string>
+    <string name="use_biometric">생체로그인 사용</string>
+    <string name="name_label">이름</string>
+    <string name="name_hint">이름을 입력하세요</string>
+    <string name="password_confirm_label">비밀번호 확인</string>
+    <string name="password_confirm_hint">비밀번호를 다시 입력하세요</string>
+    <string name="signup_success">회원가입 성공!</string>
+    <string name="enter_id">아이디를 입력해주세요.</string>
+    <string name="enter_password">비밀번호를 입력해주세요.</string>
+    <string name="enter_name">이름을 입력해주세요.</string>
+    <string name="password_mismatch">비밀번호가 일치하지 않습니다.</string>
+    <string name="login_success">로그인 성공!</string>
+    <string name="biometric_init_failed">암호화 저장소 초기화 실패로 생체로그인을 사용할 수 없습니다.</string>
+    <string name="no_biometric_available">사용 가능한 지문 인증이 없습니다.</string>
+    <string name="biometric_login_title">생체로그인</string>
+    <string name="biometric_login_subtitle">지문으로 로그인합니다</string>
+    <string name="cancel">취소</string>
+    <string name="server_error">서버 오류가 발생했습니다.</string>
+    
+    <!-- Payment & Cart -->
+    <string name="payment_amount_format">%1$s 금액: ₩ %2$,d</string>
+    <string name="order_number_format">주문번호: %1$s</string>
+    <string name="cart_total_format">₩ %1$,d</string>
+    
 </resources>

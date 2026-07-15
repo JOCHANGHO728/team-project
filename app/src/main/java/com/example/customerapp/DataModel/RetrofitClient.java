@@ -12,13 +12,21 @@ public class RetrofitClient {
 
     private RetrofitClient() {
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)  // ← 추가
-                .readTimeout(30, TimeUnit.SECONDS)      // ← 추가
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .addInterceptor(chain -> {
+                    okhttp3.Request.Builder requestBuilder = chain.request().newBuilder();
+                    String token = CartManager.getInstance().getAuthorizationHeader();
+                    if (token != null && !token.isEmpty()) {
+                        requestBuilder.header("Authorization", token);
+                    }
+                    return chain.proceed(requestBuilder.build());
+                })
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .client(client)                         // ← 추가
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(ApiService.class);

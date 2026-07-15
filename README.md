@@ -41,6 +41,13 @@
 
 ## 최근 변경 사항
 
+### 코드 개선 및 안정성 강화 (Refactoring)
+
+- **네트워크 구조 최적화**: `RetrofitClient`에 `OkHttp Interceptor`를 추가하여 모든 API 호출에 인증 토큰(`Authorization`)이 자동으로 주입되도록 개선했습니다. (기존 개별 파라미터 전달 방식 제거)
+- **UI 렌더링 최적화**: `RecyclerView` 갱신 시 전체를 다시 그리는 `notifyDataSetChanged()` 대신, 변경된 항목만 갱신하는 메서드(`notifyItemRangeInserted` 등)를 사용하여 성능을 개선하고 Lint 에러를 해결했습니다.
+- **다국어 지원(하드코딩 제거)**: 앱 전반의 알림(Toast) 및 UI 텍스트를 `strings.xml` 리소스로 분리하여 다국어 처리 및 유지보수성을 높였습니다. (`Customer`, `BarcodeScan`, `Login` 액티비티 적용 완료)
+- **스레드(Thread) 안정성 강화**: 싱글톤 객체인 `CartManager`의 장바구니 리스트(`cartItems`)를 `CopyOnWriteArrayList`로 변경하여 `ConcurrentModificationException`을 방지하고 다중 스레드 접근 안정성을 확보했습니다.
+
 ### 장바구니 / 바코드 스캔
 
 - `activity_customer`에서 미리 담은 상품이 `activity_shopping_basket`의 총 상품 금액에 포함되도록 수정했습니다.

@@ -122,13 +122,13 @@ public class BarcodeScan extends AppCompatActivity {
 
         scannedItems.put(pendingBarcode, scannedItems.getOrDefault(pendingBarcode, 0) + 1);
         Log.d("SCAN_MAP", "현재 스캔 목록: " + scannedItems);
-        Toast.makeText(this, "상품을 담았습니다.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.product_put_in_cart, Toast.LENGTH_SHORT).show();
 
         pendingBarcode = null;
         isDetected = false;
         hideScannedProductPanel(true);
         binding.btnAddScannedProduct.setEnabled(false);
-        binding.tvScanMessage.setText("다음 바코드를 스캔해주세요");
+        binding.tvScanMessage.setText(R.string.scan_next_barcode);
     }
 
     private void startCamera() {
@@ -191,7 +191,7 @@ public class BarcodeScan extends AppCompatActivity {
 
                     isDetected = true;
                     pendingBarcode = value.trim();
-                    binding.tvScanMessage.setText("스캔된 바코드: " + pendingBarcode);
+                    binding.tvScanMessage.setText(getString(R.string.scanned_barcode_msg, pendingBarcode));
                     binding.btnAddScannedProduct.setEnabled(false);
                     hideScannedProductPanel(false);
                     loadScannedProduct(pendingBarcode);
@@ -257,7 +257,7 @@ public class BarcodeScan extends AppCompatActivity {
         pendingBarcode = barcode;
         binding.tvScannedProductName.setText(product.getPName());
         binding.tvScannedProductInfo.setText(
-                "가격: " + product.getPPrice() + "원 / 바코드: " + barcode
+                getString(R.string.scanned_product_msg, product.getPPrice(), barcode)
         );
         showScannedProductPanel();
         binding.btnAddScannedProduct.setEnabled(true);
@@ -265,7 +265,7 @@ public class BarcodeScan extends AppCompatActivity {
 
     private void showProductNotFound(String barcode) {
         pendingBarcode = null;
-        binding.tvScanMessage.setText("등록되지 않은 상품입니다: " + barcode);
+        binding.tvScanMessage.setText(getString(R.string.unregistered_product_msg, barcode));
         hideScannedProductPanel(true);
         binding.btnAddScannedProduct.setEnabled(false);
         binding.cameraPreview.postDelayed(() -> isDetected = false, 1500);
@@ -315,7 +315,7 @@ public class BarcodeScan extends AppCompatActivity {
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startCamera();
         } else {
-            Toast.makeText(this, "카메라 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.camera_permission_required, Toast.LENGTH_SHORT).show();
             finish();
         }
     }

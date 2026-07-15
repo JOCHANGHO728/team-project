@@ -57,11 +57,11 @@ public class Login extends AppCompatActivity {
             String uPassword = binding.etLoginPw.getText().toString().trim();
 
             if (uId.isEmpty()) {
-                Toast.makeText(this, "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.enter_id, Toast.LENGTH_SHORT).show();
                 return;
             }
             if (uPassword.isEmpty()) {
-                Toast.makeText(this, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.enter_password, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -91,7 +91,7 @@ public class Login extends AppCompatActivity {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
         } catch (Exception e) {
-            Toast.makeText(this, "암호화 저장소 초기화 실패로 생체로그인을 사용할 수 없습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.biometric_init_failed, Toast.LENGTH_SHORT).show();
             return null;
         }
     }
@@ -113,7 +113,7 @@ public class Login extends AppCompatActivity {
         BiometricManager biometricManager = BiometricManager.from(this);
         if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                 != BiometricManager.BIOMETRIC_SUCCESS) {
-            Toast.makeText(this, "사용 가능한 지문 인증이 없습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_biometric_available, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -130,9 +130,9 @@ public class Login extends AppCompatActivity {
         );
 
         BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                .setTitle("생체로그인")
-                .setSubtitle("지문으로 로그인합니다")
-                .setNegativeButtonText("취소")
+                .setTitle(getString(R.string.biometric_login_title))
+                .setSubtitle(getString(R.string.biometric_login_subtitle))
+                .setNegativeButtonText(getString(R.string.cancel))
                 .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                 .build();
         prompt.authenticate(promptInfo);
@@ -153,7 +153,7 @@ public class Login extends AppCompatActivity {
                                 UserAuthResponse auth = result.getData();
                                 CartManager.getInstance().setLoggedInUserId(auth.getLoginId());
                                 CartManager.getInstance().setAccessToken(auth.getAccessToken());
-                                Toast.makeText(Login.this, "로그인 성공!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, R.string.login_success, Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(Login.this, Customer.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
@@ -161,13 +161,13 @@ public class Login extends AppCompatActivity {
                                 Toast.makeText(Login.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(Login.this, "서버 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, R.string.server_error, Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<UserAuthResponse>> call, Throwable t) {
-                        Toast.makeText(Login.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Login.this, getString(R.string.network_error, t.getMessage()), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

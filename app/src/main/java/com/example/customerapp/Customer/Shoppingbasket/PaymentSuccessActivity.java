@@ -128,8 +128,7 @@ public class PaymentSuccessActivity extends AppCompatActivity {
         }
 
         String loginId = CartManager.getInstance().getLoggedInUserId();
-        String authorization = CartManager.getInstance().getAuthorizationHeader();
-        if (loginId == null || loginId.isBlank() || authorization == null || authorization.isBlank()) {
+        if (loginId == null || loginId.isBlank()) {
             Toast.makeText(this, "로그인 정보가 없어 주문 저장에 실패했습니다.", Toast.LENGTH_LONG).show();
             orderSaving = false;
             btnReturn.setEnabled(true);
@@ -138,7 +137,7 @@ public class PaymentSuccessActivity extends AppCompatActivity {
         }
 
         OrderRequest request = new OrderRequest(loginId, orderItems);
-        RetrofitClient.getInstance().getApiService().createOrder(authorization, request)
+        RetrofitClient.getInstance().getApiService().createOrder(request)
                 .enqueue(new Callback<ApiResponse<Void>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {

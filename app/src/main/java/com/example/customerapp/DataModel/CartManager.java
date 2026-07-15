@@ -2,10 +2,11 @@ package com.example.customerapp.DataModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CartManager {
     private static CartManager instance;
-    private List<Product> cartItems = new ArrayList<>();
+    private final List<Product> cartItems = new CopyOnWriteArrayList<>();
     private String loggedInUserId = "";
     private String accessToken = "";
 

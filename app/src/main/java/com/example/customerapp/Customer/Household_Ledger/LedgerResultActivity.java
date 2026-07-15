@@ -66,7 +66,6 @@ public class LedgerResultActivity extends AppCompatActivity {
 
         RetrofitClient.getInstance().getApiService()
                 .getPurchaseHistoryByRange(
-                        CartManager.getInstance().getAuthorizationHeader(),
                         userId,
                         startDate,
                         endDate

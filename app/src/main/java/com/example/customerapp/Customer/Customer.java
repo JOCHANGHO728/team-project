@@ -74,8 +74,6 @@ public class Customer extends AppCompatActivity {
 
         rvCategory.setLayoutManager(new LinearLayoutManager(this));
         rvProductList.setLayoutManager(new LinearLayoutManager(this));
-        rvCategory.setHasFixedSize(true);
-        rvProductList.setHasFixedSize(true);
 
         // 2. 초기 어댑터 설정 (DB 로딩 후 교체)
         categoryAdapter = new CategoryAdapter(new ArrayList<>(), categoryName -> {
@@ -144,13 +142,13 @@ public class Customer extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ApiResponse<List<Product>>> call, Response<ApiResponse<List<Product>>> response) {
                         if (!response.isSuccessful() || response.body() == null || !response.body().isSuccess()) {
-                            Toast.makeText(Customer.this, "카테고리 조회 실패", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Customer.this, R.string.category_load_failed, Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         List<Product> products = response.body().getData();
                         if (products == null || products.isEmpty()) {
-                            Toast.makeText(Customer.this, "등록된 상품이 없습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Customer.this, R.string.no_registered_products, Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -169,7 +167,7 @@ public class Customer extends AppCompatActivity {
                         categories.add(ALL_PRODUCTS_CATEGORY);
                         categories.addAll(categorySet);
                         if (categories.isEmpty()) {
-                            Toast.makeText(Customer.this, "카테고리 정보가 없습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Customer.this, R.string.no_category_info, Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -181,7 +179,7 @@ public class Customer extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<ApiResponse<List<Product>>> call, Throwable t) {
-                        Toast.makeText(Customer.this, "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Customer.this, getString(R.string.network_error, t.getMessage()), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -248,7 +246,7 @@ public class Customer extends AppCompatActivity {
                 products,
                 product -> {
                     CartManager.getInstance().addItem(product);
-                    Toast.makeText(this, "장바구니에 추가되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.added_to_cart, Toast.LENGTH_SHORT).show();
                 },
                 this::showVariantPicker
         );
@@ -276,7 +274,7 @@ public class Customer extends AppCompatActivity {
         RecyclerView rvOptions = dialogView.findViewById(R.id.rv_option_list);
         MaterialButton btnAddSelectedProduct = dialogView.findViewById(R.id.btn_add_selected_product);
 
-        tvTitle.setText(baseName + " 옵션 선택");
+        tvTitle.setText(getString(R.string.option_select_title, baseName));
         rvOptions.setLayoutManager(new GridLayoutManager(this, 2));
 
         final Product[] selectedOption = {selectedProduct};
@@ -293,7 +291,7 @@ public class Customer extends AppCompatActivity {
         rvOptions.setAdapter(optionAdapter);
         btnAddSelectedProduct.setOnClickListener(v -> {
             CartManager.getInstance().addItem(selectedOption[0]);
-            Toast.makeText(this, selectedOption[0].getPName() + " 추가", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.product_added, selectedOption[0].getPName()), Toast.LENGTH_SHORT).show();
             dialog.dismiss();
         });
         dialog.show();
@@ -306,7 +304,7 @@ public class Customer extends AppCompatActivity {
                 .error(R.drawable.ic_placeholder)
                 .into(ivProduct);
         tvName.setText(product.getPName());
-        tvPrice.setText(product.getPPrice() + "원");
+        tvPrice.setText(getString(R.string.price_format, product.getPPrice()));
     }
 
     private String normalizeProductBaseName(String name) {
@@ -361,9 +359,11 @@ public class Customer extends AppCompatActivity {
         }
 
         public void setCategories(List<String> categories) {
+            int oldSize = this.categories == null ? 0 : this.categories.size();
             this.categories = new ArrayList<>(categories);
             selectedPosition = 0;
-            notifyDataSetChanged();
+            if (oldSize > 0) notifyItemRangeRemoved(0, oldSize);
+            notifyItemRangeInserted(0, categories.size());
         }
 
         @NonNull
@@ -449,7 +449,7 @@ public class Customer extends AppCompatActivity {
                     .error(R.drawable.ic_placeholder)
                     .into(holder.ivOptionProduct);
             holder.tvOptionLabel.setText(getOptionLabel(product.getPName()));
-            holder.tvOptionPrice.setText(product.getPPrice() + "원");
+            holder.tvOptionPrice.setText(holder.itemView.getContext().getString(R.string.price_format, product.getPPrice()));
             bindDiscountBadge(holder, product);
             holder.itemView.setOnClickListener(v -> listener.onSelect(product));
         }
@@ -464,9 +464,9 @@ public class Customer extends AppCompatActivity {
             int regularTotal = regularPrice * BOX_UNIT_COUNT;
             int discountPercent = Math.round((regularTotal - product.getPPrice()) * 100f / regularTotal);
             if (discountPercent <= 0) {
-                holder.tvDiscountBadge.setText("박스상품");
+                holder.tvDiscountBadge.setText(R.string.box_product);
             } else {
-                holder.tvDiscountBadge.setText("일반상품보다 " + discountPercent + "% 저렴");
+                holder.tvDiscountBadge.setText(holder.itemView.getContext().getString(R.string.discount_badge, discountPercent));
             }
             holder.tvDiscountBadge.setVisibility(View.VISIBLE);
         }

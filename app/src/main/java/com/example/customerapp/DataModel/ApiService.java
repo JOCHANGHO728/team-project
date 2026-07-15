@@ -24,7 +24,6 @@ public interface ApiService {
     // 주문 생성: POST /api/v1/orders
     @POST("api/v1/orders")
     Call<ApiResponse<Void>> createOrder(
-            @Header("Authorization") String authorization,
             @Body OrderRequest request
     );
 
@@ -35,14 +34,12 @@ public interface ApiService {
     // 전체 구매 내역 조회: GET /api/v1/purchase-history/{uId}
     @GET("api/v1/purchase-history/{uId}")
     Call<ApiResponse<List<PurchaseHistoryItem>>> getPurchaseHistory(
-            @Header("Authorization") String authorization,
             @Path("uId") String uId
     );
 
     // 기간별 구매 내역 조회: GET /api/v1/purchase-history/{uId}/range
     @GET("api/v1/purchase-history/{uId}/range")
     Call<ApiResponse<List<PurchaseHistoryItem>>> getPurchaseHistoryByRange(
-            @Header("Authorization") String authorization,
             @Path("uId") String uId,
             @Query("startDate") String startDate,
             @Query("endDate") String endDate
