@@ -20,23 +20,22 @@ import com.example.customerapp.DataModel.ApiResponse;
 import com.example.customerapp.DataModel.ApiService;
 import com.example.customerapp.DataModel.CartManager;
 import com.example.customerapp.DataModel.Product;
+import com.example.customerapp.DataModel.RetrofitClient;
 import com.example.customerapp.R;
 import com.example.customerapp.databinding.ActivityShoppingBasketBinding;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class ShoppingBasket extends AppCompatActivity {
 
-    private static final String BASE_URL = "https://server-jc54.onrender.com/";
     private ActivityShoppingBasketBinding binding;
 
     private ActivityResultLauncher<Intent> barcodeLauncher;
@@ -49,12 +48,7 @@ public class ShoppingBasket extends AppCompatActivity {
         binding = ActivityShoppingBasketBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        ApiService api = retrofit.create(ApiService.class);
+        ApiService api = RetrofitClient.getInstance().getApiService();
 
         cartAdapter = new CartAdapter();
         cartAdapter.setOnCartChangeListener(this::updateTotalPrice);
@@ -90,9 +84,9 @@ public class ShoppingBasket extends AppCompatActivity {
         });
 
         binding.btnOrder.setOnClickListener(v -> {
-            int totalPrice = calculateTotalPrice();
+            int totalPrice = CartManager.getInstance().getScannedTotalPrice();
             if (totalPrice <= 0) {
-                Toast.makeText(ShoppingBasket.this, "장바구니가 비어있습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ShoppingBasket.this, "바코드 스캔된 상품이 없습니다.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -192,9 +186,7 @@ public class ShoppingBasket extends AppCompatActivity {
     }
 
     private void addProductToCart(Product product, int qty) {
-        for (int i = 0; i < qty; i++) {
-            CartManager.getInstance().addItem(product);
-        }
+        CartManager.getInstance().addScannedItem(product, qty);
         syncCartFromManager();
         Toast.makeText(this, product.getPName() + " 장바구니 추가", Toast.LENGTH_SHORT).show();
     }
@@ -204,9 +196,10 @@ public class ShoppingBasket extends AppCompatActivity {
     }
 
     private void updateTotalPrice() {
-        int total = calculateTotalPrice();
-        binding.tvTotalPrice.setText("총 금액: " + total + "원");
-        binding.tvScannedPrice.setText("₩" + total);
+        int total = CartManager.getInstance().getTotalPrice();
+        int scannedTotal = CartManager.getInstance().getScannedTotalPrice();
+        binding.tvTotalPrice.setText(formatWon(total));
+        binding.tvScannedPrice.setText(formatWon(scannedTotal));
     }
 
     private int calculateTotalPrice() {
@@ -230,7 +223,17 @@ public class ShoppingBasket extends AppCompatActivity {
         for (Product product : CartManager.getInstance().getCartItems()) {
             cartItems.add(new CartItem(product, product.getCartQuantity()));
         }
+        cartItems.sort(Comparator
+                .comparing(CartItem::isScannedInStore)
+                .thenComparing(item -> {
+                    String name = item.getProduct().getPName();
+                    return name == null ? "" : name;
+                }));
         cartAdapter.setData(cartItems);
         updateTotalPrice();
+    }
+
+    private String formatWon(int amount) {
+        return String.format(Locale.KOREA, "₩%,d", amount);
     }
 }

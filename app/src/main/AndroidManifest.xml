@@ -58,6 +58,9 @@
             android:name=".Customer.Household_Ledger.household_Ledger"
             android:exported="false" />
         <activity
+            android:name=".Customer.Household_Ledger.LedgerDetailSearchActivity"
+            android:exported="false" />
+        <activity
             android:name=".Customer.Household_Ledger.LedgerResultActivity"
             android:exported="false" />
         <activity

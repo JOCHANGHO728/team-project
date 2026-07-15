@@ -74,6 +74,8 @@ public class Customer extends AppCompatActivity {
 
         rvCategory.setLayoutManager(new LinearLayoutManager(this));
         rvProductList.setLayoutManager(new LinearLayoutManager(this));
+        rvCategory.setHasFixedSize(true);
+        rvProductList.setHasFixedSize(true);
 
         // 2. 초기 어댑터 설정 (DB 로딩 후 교체)
         categoryAdapter = new CategoryAdapter(new ArrayList<>(), categoryName -> {
@@ -171,12 +173,7 @@ public class Customer extends AppCompatActivity {
                             return;
                         }
 
-                        categoryAdapter = new CategoryAdapter(categories, categoryName -> {
-                            currentCategory = categoryName;
-                            svProductSearch.setQuery("", false);
-                            loadProductsForCategory(categoryName);
-                        });
-                        rvCategory.setAdapter(categoryAdapter);
+                        categoryAdapter.setCategories(categories);
 
                         currentCategory = ALL_PRODUCTS_CATEGORY;
                         showAllProducts();
@@ -346,8 +343,7 @@ public class Customer extends AppCompatActivity {
         currentDisplayProducts.clear();
         currentDisplayProducts.addAll(baseProductMap.values());
 
-        productAdapter = createProductAdapter(new ArrayList<>(currentDisplayProducts));
-        rvProductList.setAdapter(productAdapter);
+        productAdapter.setData(new ArrayList<>(currentDisplayProducts));
     }
 
 
@@ -361,6 +357,13 @@ public class Customer extends AppCompatActivity {
         public CategoryAdapter(List<String> categories, OnCategoryClickListener listener) {
             this.categories = categories;
             this.listener = listener;
+            setHasStableIds(true);
+        }
+
+        public void setCategories(List<String> categories) {
+            this.categories = new ArrayList<>(categories);
+            selectedPosition = 0;
+            notifyDataSetChanged();
         }
 
         @NonNull
@@ -397,6 +400,11 @@ public class Customer extends AppCompatActivity {
 
         @Override
         public int getItemCount() { return categories.size(); }
+
+        @Override
+        public long getItemId(int position) {
+            return categories.get(position).hashCode();
+        }
 
         class ViewHolder extends RecyclerView.ViewHolder {
             TextView tvName;

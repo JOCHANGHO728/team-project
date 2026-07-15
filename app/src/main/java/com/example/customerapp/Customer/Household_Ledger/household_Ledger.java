@@ -3,37 +3,33 @@ package com.example.customerapp.Customer.Household_Ledger;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.customerapp.R;
-import com.example.customerapp.databinding.ActivityHouseholdLedgerBinding;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-
 import com.example.customerapp.Customer.Customer;
-import com.example.customerapp.Customer.Shoppingbasket.ShoppingBasket;
 import com.example.customerapp.Customer.MyInfo;
+import com.example.customerapp.Customer.Shoppingbasket.ShoppingBasket;
 import com.example.customerapp.DataModel.ApiResponse;
 import com.example.customerapp.DataModel.CartManager;
 import com.example.customerapp.DataModel.PurchaseHistoryItem;
 import com.example.customerapp.DataModel.RetrofitClient;
+import com.example.customerapp.R;
+import com.example.customerapp.databinding.ActivityHouseholdLedgerBinding;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -42,10 +38,8 @@ import retrofit2.Response;
 
 public class household_Ledger extends AppCompatActivity {
     private ActivityHouseholdLedgerBinding binding;
-    // 시작 날짜와 종료 날짜를 저장할 변수
-    private Calendar startDateCalendar;
-    private Calendar endDateCalendar;
     private final SimpleDateFormat apiDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+    private Calendar displayedMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,76 +47,22 @@ public class household_Ledger extends AppCompatActivity {
         binding = ActivityHouseholdLedgerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // --- 1. 시작 날짜 설정 ---
-        binding.buttonStartDate.setOnClickListener(v -> {
-            DatePickerFragment dialogFragment = new DatePickerFragment();
-            dialogFragment.setOnDateSelectedListener((year, month, day) -> {
-                String selectedDate = year + "년 " + month + "월 " + day + "일";
-                binding.StartDate.setHint("선택한 날짜: " + selectedDate);
+        displayedMonth = Calendar.getInstance();
+        displayedMonth.set(Calendar.DAY_OF_MONTH, 1);
 
-                // 시작 날짜 객체 저장
-                startDateCalendar = Calendar.getInstance();
-                startDateCalendar.set(year, month - 1, day);
-            });
-            dialogFragment.show(getSupportFragmentManager(), "datePicker");
+        binding.btnPrevMonth.setOnClickListener(v -> {
+            displayedMonth.add(Calendar.MONTH, -1);
+            loadMonthPieChart();
         });
 
-        // --- 2. 종료 날짜 설정 ---
-        binding.buttonEndDate.setOnClickListener(v -> {
-            DatePickerFragment dialogFragment = new DatePickerFragment();
-            dialogFragment.setOnDateSelectedListener((year, month, day) -> {
-                endDateCalendar = Calendar.getInstance();
-                endDateCalendar.set(year, month - 1, day);
-
-                // 시작 날짜와 비교 검증
-                if (startDateCalendar != null && endDateCalendar.before(startDateCalendar)) {
-                    Toast.makeText(this, "종료 날짜는 시작 날짜 이후여야 합니다.", Toast.LENGTH_SHORT).show();
-                    endDateCalendar = null; // 잘못된 선택 시 초기화
-                } else {
-                    String selectedDate = year + "년 " + month + "월 " + day + "일";
-                    binding.EndDate.setHint("선택한 날짜: " + selectedDate);
-                }
-            });
-            dialogFragment.show(getSupportFragmentManager(), "datePicker");
+        binding.btnNextMonth.setOnClickListener(v -> {
+            displayedMonth.add(Calendar.MONTH, 1);
+            loadMonthPieChart();
         });
 
-        // --- 3. 초기화 기능 ---
-        binding.buttonReset.setOnClickListener(v -> {
-            binding.StartDate.setHint("연도-월-일 선택");
-            binding.EndDate.setHint("연도-월-일 선택");
-            startDateCalendar = null;
-            endDateCalendar = null;
-            Log.d("Reset", "날짜 초기화 완료");
-        });
+        binding.btnDetailSearch.setOnClickListener(v ->
+                startActivity(new Intent(this, LedgerDetailSearchActivity.class)));
 
-        // --- 4. 조회 기능 (최종 수정본: 결과 화면으로 이동) ---
-        binding.buttonSearch.setOnClickListener(v -> {
-            Calendar today = Calendar.getInstance();
-            if (startDateCalendar == null) {
-                startDateCalendar = (Calendar) today.clone();
-                binding.StartDate.setHint("선택한 날짜: " + formatKoreanDate(startDateCalendar));
-            }
-            if (endDateCalendar == null) {
-                endDateCalendar = (Calendar) today.clone();
-                binding.EndDate.setHint("선택한 날짜: " + formatKoreanDate(endDateCalendar));
-            }
-
-            if (endDateCalendar.before(startDateCalendar)) {
-                Toast.makeText(this, "종료 날짜는 시작 날짜 이후여야 합니다.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            String startDate = apiDateFormat.format(startDateCalendar.getTime());
-            String endDate = apiDateFormat.format(endDateCalendar.getTime());
-
-            // 결과 화면(LedgerResultActivity)으로 인텐트 전달 및 이동
-            Intent intent = new Intent(household_Ledger.this, LedgerResultActivity.class);
-            intent.putExtra("start_date", startDate);
-            intent.putExtra("end_date", endDate);
-            startActivity(intent);
-        });
-
-        // --- 5. 하단 네비게이션 바 설정 ---
         binding.bottomNavigation.setSelectedItemId(R.id.nav_ledger);
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -147,35 +87,33 @@ public class household_Ledger extends AppCompatActivity {
             return false;
         });
 
-        // 시스템 바Insets 설정 (하단 여백 0 유지)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
 
-        loadCurrentMonthPieChart();
+        loadMonthPieChart();
     }
 
-    private String formatKoreanDate(Calendar calendar) {
-        return calendar.get(Calendar.YEAR) + "년 "
-                + (calendar.get(Calendar.MONTH) + 1) + "월 "
-                + calendar.get(Calendar.DAY_OF_MONTH) + "일";
-    }
+    private void loadMonthPieChart() {
+        int year = displayedMonth.get(Calendar.YEAR);
+        int month = displayedMonth.get(Calendar.MONTH) + 1;
+        binding.tvMonthTitle.setText(month + "월");
+        binding.tvMonthTotalAmount.setText(formatWon(0));
+        binding.tvMonthEmptyMessage.setText("");
 
-    private void loadCurrentMonthPieChart() {
         String userId = CartManager.getInstance().getLoggedInUserId();
         if (userId == null || userId.isBlank()) {
-            binding.tvMonthEmptyMessage.setText("로그인 후 이번달 소비 비율을 볼 수 있습니다.");
+            binding.pieChartMonth.clear();
+            binding.tvMonthEmptyMessage.setText("로그인 후 월별 소비 비율을 볼 수 있습니다.");
             return;
         }
 
-        Calendar now = Calendar.getInstance();
-        int currentMonth = now.get(Calendar.MONTH) + 1;
-        Calendar firstDay = (Calendar) now.clone();
+        Calendar firstDay = (Calendar) displayedMonth.clone();
         firstDay.set(Calendar.DAY_OF_MONTH, 1);
-        Calendar lastDay = (Calendar) now.clone();
-        lastDay.set(Calendar.DAY_OF_MONTH, now.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Calendar lastDay = (Calendar) displayedMonth.clone();
+        lastDay.set(Calendar.DAY_OF_MONTH, displayedMonth.getActualMaximum(Calendar.DAY_OF_MONTH));
 
         String startDate = apiDateFormat.format(firstDay.getTime());
         String endDate = apiDateFormat.format(lastDay.getTime());
@@ -192,22 +130,28 @@ public class household_Ledger extends AppCompatActivity {
                     public void onResponse(Call<ApiResponse<List<PurchaseHistoryItem>>> call,
                                            Response<ApiResponse<List<PurchaseHistoryItem>>> response) {
                         if (!response.isSuccessful() || response.body() == null || !response.body().isSuccess()) {
-                            binding.tvMonthEmptyMessage.setText("이번달 구매 내역 조회에 실패했습니다.");
+                            binding.pieChartMonth.clear();
+                            binding.tvMonthEmptyMessage.setText("구매 내역 조회에 실패했습니다.");
+                            binding.tvMonthTotalAmount.setText(formatWon(0));
                             return;
                         }
                         List<PurchaseHistoryItem> items = response.body().getData();
-                        renderMonthPieChart(items == null ? new ArrayList<>() : items, currentMonth);
+                        renderMonthPieChart(items == null ? new ArrayList<>() : items, year, month);
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<List<PurchaseHistoryItem>>> call, Throwable t) {
+                        binding.pieChartMonth.clear();
                         binding.tvMonthEmptyMessage.setText("네트워크 오류로 그래프를 불러오지 못했습니다.");
+                        binding.tvMonthTotalAmount.setText(formatWon(0));
                     }
                 });
     }
 
-    private void renderMonthPieChart(List<PurchaseHistoryItem> items, int month) {
+    private void renderMonthPieChart(List<PurchaseHistoryItem> items, int year, int month) {
         Map<String, Integer> amountByCategory = new LinkedHashMap<>();
+        int totalAmount = 0;
+
         for (PurchaseHistoryItem item : items) {
             String category = item.getCategory();
             if (category == null || category.isBlank()) {
@@ -217,12 +161,16 @@ public class household_Ledger extends AppCompatActivity {
             if (amount <= 0) {
                 continue;
             }
+            totalAmount += amount;
             amountByCategory.put(category, amountByCategory.getOrDefault(category, 0) + amount);
         }
 
+        binding.tvMonthTotalAmount.setText(formatWon(totalAmount));
+
         if (amountByCategory.isEmpty()) {
             binding.pieChartMonth.clear();
-            binding.tvMonthEmptyMessage.setText("이번달 구매 내역이 없습니다.");
+            binding.tvMonthEmptyMessage.setText(year + "년 " + month + "월 구매 내역이 없습니다.");
+            binding.pieChartMonth.invalidate();
             return;
         }
 
@@ -266,7 +214,7 @@ public class household_Ledger extends AppCompatActivity {
         binding.pieChartMonth.setEntryLabelColor(Color.parseColor("#374151"));
         binding.pieChartMonth.setEntryLabelTextSize(11f);
         binding.pieChartMonth.setRotationAngle(300f);
-        binding.pieChartMonth.animateY(850);
+        binding.pieChartMonth.animateY(450);
 
         Legend legend = binding.pieChartMonth.getLegend();
         legend.setEnabled(true);
@@ -277,5 +225,9 @@ public class household_Ledger extends AppCompatActivity {
         legend.setTextColor(Color.parseColor("#4B5563"));
 
         binding.pieChartMonth.invalidate();
+    }
+
+    private String formatWon(int amount) {
+        return String.format(Locale.KOREA, "%,d원", amount);
     }
 }

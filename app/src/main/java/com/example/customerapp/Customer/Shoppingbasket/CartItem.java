@@ -14,4 +14,6 @@ public class CartItem {
     public Product getProduct() { return product; }
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
+    public int getScannedQuantity() { return product == null ? 0 : product.getScannedQuantity(); }
+    public boolean isScannedInStore() { return getScannedQuantity() > 0; }
 }

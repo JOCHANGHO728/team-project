@@ -28,6 +28,7 @@ import com.example.customerapp.Customer.Shoppingbasket.ShoppingBasket;
 import com.example.customerapp.DataModel.ApiResponse;
 import com.example.customerapp.DataModel.ApiService;
 import com.example.customerapp.DataModel.Product;
+import com.example.customerapp.DataModel.RetrofitClient;
 import com.example.customerapp.R;
 import com.example.customerapp.databinding.ActivityBarcodeScanBinding;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -45,13 +46,10 @@ import java.util.concurrent.ExecutionException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
 public class BarcodeScan extends AppCompatActivity {
 
     private static final int CAMERA_PERMISSION = 1001;
-    private static final String BASE_URL = "https://server-jc54.onrender.com/";
+    private static final long PANEL_ANIMATION_MS = 160L;
 
     private ActivityBarcodeScanBinding binding;
     private ApiService apiService;
@@ -65,13 +63,9 @@ public class BarcodeScan extends AppCompatActivity {
         binding = ActivityBarcodeScanBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        apiService = retrofit.create(ApiService.class);
+        apiService = RetrofitClient.getInstance().getApiService();
 
-        binding.scannedProductPanel.setVisibility(View.GONE);
+        hideScannedProductPanel(false);
         binding.btnAddScannedProduct.setEnabled(false);
         binding.btnAddScannedProduct.setOnClickListener(v -> addPendingBarcode());
 
@@ -132,7 +126,7 @@ public class BarcodeScan extends AppCompatActivity {
 
         pendingBarcode = null;
         isDetected = false;
-        binding.scannedProductPanel.setVisibility(View.GONE);
+        hideScannedProductPanel(true);
         binding.btnAddScannedProduct.setEnabled(false);
         binding.tvScanMessage.setText("다음 바코드를 스캔해주세요");
     }
@@ -199,7 +193,7 @@ public class BarcodeScan extends AppCompatActivity {
                     pendingBarcode = value.trim();
                     binding.tvScanMessage.setText("스캔된 바코드: " + pendingBarcode);
                     binding.btnAddScannedProduct.setEnabled(false);
-                    binding.scannedProductPanel.setVisibility(View.GONE);
+                    hideScannedProductPanel(false);
                     loadScannedProduct(pendingBarcode);
                 })
                 .addOnCompleteListener(task -> imageProxy.close());
@@ -265,16 +259,49 @@ public class BarcodeScan extends AppCompatActivity {
         binding.tvScannedProductInfo.setText(
                 "가격: " + product.getPPrice() + "원 / 바코드: " + barcode
         );
-        binding.scannedProductPanel.setVisibility(View.VISIBLE);
+        showScannedProductPanel();
         binding.btnAddScannedProduct.setEnabled(true);
     }
 
     private void showProductNotFound(String barcode) {
         pendingBarcode = null;
         binding.tvScanMessage.setText("등록되지 않은 상품입니다: " + barcode);
-        binding.scannedProductPanel.setVisibility(View.GONE);
+        hideScannedProductPanel(true);
         binding.btnAddScannedProduct.setEnabled(false);
         binding.cameraPreview.postDelayed(() -> isDetected = false, 1500);
+    }
+
+    private void showScannedProductPanel() {
+        binding.scannedProductPanel.animate().cancel();
+        binding.scannedProductPanel.setAlpha(0f);
+        binding.scannedProductPanel.setTranslationY(12f);
+        binding.scannedProductPanel.setVisibility(View.VISIBLE);
+        binding.scannedProductPanel.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(PANEL_ANIMATION_MS)
+                .start();
+    }
+
+    private void hideScannedProductPanel(boolean animate) {
+        binding.scannedProductPanel.animate().cancel();
+        if (!animate) {
+            binding.scannedProductPanel.setVisibility(View.GONE);
+            binding.scannedProductPanel.setAlpha(1f);
+            binding.scannedProductPanel.setTranslationY(0f);
+            return;
+        }
+
+        binding.scannedProductPanel.animate()
+                .alpha(0f)
+                .translationY(12f)
+                .setDuration(PANEL_ANIMATION_MS)
+                .withEndAction(() -> {
+                    binding.scannedProductPanel.setVisibility(View.GONE);
+                    binding.scannedProductPanel.setAlpha(1f);
+                    binding.scannedProductPanel.setTranslationY(0f);
+                })
+                .start();
     }
 
     @Override

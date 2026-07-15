@@ -63,7 +63,7 @@ public class PaymentSuccessActivity extends AppCompatActivity {
     }
 
     private String buildReceiptText(int totalPrice) {
-        List<Product> cartProducts = CartManager.getInstance().getCartItems();
+        List<Product> cartProducts = CartManager.getInstance().getScannedCartItems();
         if (cartProducts == null || cartProducts.isEmpty()) {
             return "결제 품목이 없습니다.";
         }
@@ -79,7 +79,7 @@ public class PaymentSuccessActivity extends AppCompatActivity {
                 name = "상품명 없음";
             }
 
-            int quantity = product.getCartQuantity();
+            int quantity = product.getScannedQuantity();
             int lineTotal = product.getPPrice() * quantity;
             calculatedTotal += lineTotal;
 
@@ -103,7 +103,7 @@ public class PaymentSuccessActivity extends AppCompatActivity {
         btnReturn.setEnabled(false);
         btnReturn.setText("결제내역 저장 중...");
 
-        List<Product> cartProducts = CartManager.getInstance().getCartItems();
+        List<Product> cartProducts = CartManager.getInstance().getScannedCartItems();
         if (cartProducts == null || cartProducts.isEmpty()) {
             orderSaved = true;
             orderSaving = false;
@@ -114,8 +114,8 @@ public class PaymentSuccessActivity extends AppCompatActivity {
 
         List<OrderItem> orderItems = new ArrayList<>();
         for (Product product : cartProducts) {
-            if (product.getPId() != null && product.getCartQuantity() > 0) {
-                orderItems.add(new OrderItem(product.getPId(), product.getCartQuantity()));
+            if (product.getPId() != null && product.getScannedQuantity() > 0) {
+                orderItems.add(new OrderItem(product.getPId(), product.getScannedQuantity()));
             }
         }
 
@@ -143,7 +143,7 @@ public class PaymentSuccessActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                            CartManager.getInstance().clearCart();
+                            CartManager.getInstance().clearScannedItemsAfterPayment();
                             orderSaved = true;
                             orderSaving = false;
                             btnReturn.setEnabled(true);

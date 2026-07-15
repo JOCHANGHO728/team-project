@@ -16,6 +16,25 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
+        <TextView
+            android:id="@+id/tvScannedRibbon"
+            android:layout_width="92dp"
+            android:layout_height="24dp"
+            android:background="#E53935"
+            android:elevation="6dp"
+            android:gravity="center"
+            android:rotation="-45"
+            android:text="스캔됨"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:translationX="-28dp"
+            android:translationY="8dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
         <ImageView
             android:id="@+id/ivProduct"
             android:layout_width="80dp"

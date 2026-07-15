@@ -36,4 +36,9 @@ public class Product {
     private int cartQuantity = 1;
     public int getCartQuantity() { return cartQuantity; }
     public void setCartQuantity(int qty) { cartQuantity = qty; }
+
+    private int scannedQuantity = 0;
+    public int getScannedQuantity() { return scannedQuantity; }
+    public void setScannedQuantity(int qty) { scannedQuantity = Math.max(0, qty); }
+    public boolean isScannedInStore() { return scannedQuantity > 0; }
 }

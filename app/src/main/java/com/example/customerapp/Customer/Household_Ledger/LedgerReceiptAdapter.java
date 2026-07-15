@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.customerapp.R;
@@ -21,9 +22,10 @@ public class LedgerReceiptAdapter extends RecyclerView.Adapter<LedgerReceiptAdap
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
 
     public void setData(List<LedgerReceipt> items) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ReceiptDiffCallback(receipts, items));
         receipts.clear();
         receipts.addAll(items);
-        notifyDataSetChanged();
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @NonNull
@@ -73,6 +75,44 @@ public class LedgerReceiptAdapter extends RecyclerView.Adapter<LedgerReceiptAdap
             this.orderDate = orderDate;
             this.linesText = linesText;
             this.totalAmount = totalAmount;
+        }
+    }
+
+    private static class ReceiptDiffCallback extends DiffUtil.Callback {
+        private final List<LedgerReceipt> oldItems;
+        private final List<LedgerReceipt> newItems;
+
+        ReceiptDiffCallback(List<LedgerReceipt> oldItems, List<LedgerReceipt> newItems) {
+            this.oldItems = new ArrayList<>(oldItems);
+            this.newItems = new ArrayList<>(newItems);
+        }
+
+        @Override
+        public int getOldListSize() {
+            return oldItems.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return newItems.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            return oldItems.get(oldItemPosition).orderId == newItems.get(newItemPosition).orderId;
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            LedgerReceipt oldItem = oldItems.get(oldItemPosition);
+            LedgerReceipt newItem = newItems.get(newItemPosition);
+            return oldItem.totalAmount == newItem.totalAmount
+                    && stringEquals(oldItem.orderDate, newItem.orderDate)
+                    && stringEquals(oldItem.linesText, newItem.linesText);
+        }
+
+        private boolean stringEquals(String left, String right) {
+            return left == null ? right == null : left.equals(right);
         }
     }
 }

@@ -8,8 +8,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.customerapp.DataModel.CartManager;
 import com.example.customerapp.DataModel.Product;
 import com.example.customerapp.R;
 
@@ -23,8 +25,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     // 🔥 장바구니 데이터 갱신
     public void setData(List<CartItem> items) {
         if (items == null) return;
-        this.cartList = items;
-        notifyDataSetChanged();
+        List<CartItem> newItems = new ArrayList<>(items);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffCallback(cartList, newItems));
+        this.cartList = newItems;
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @NonNull
@@ -42,8 +46,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
         // 🔥 상품명 / 가격 / 수량 표시
         holder.tvName.setText(product.getPName());
-        holder.tvPrice.setText(product.getPPrice() + "원");
+        holder.tvPrice.setText(String.format(java.util.Locale.KOREA, "₩%,d", product.getPPrice()));
         holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
+        holder.tvScannedRibbon.setVisibility(item.isScannedInStore() ? View.VISIBLE : View.GONE);
 
         // 서버 이미지가 없거나 로딩에 실패하면 기본 이미지를 표시한다.
         Glide.with(holder.itemView.getContext())
@@ -54,7 +59,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
         // 🔥 + 버튼 클릭
         holder.btnPlus.setOnClickListener(v -> {
-            item.setQuantity(item.getQuantity() + 1);
+            int newQuantity = item.getQuantity() + 1;
+            item.setQuantity(newQuantity);
+            CartManager.getInstance().updateQuantity(product, newQuantity);
             notifyItemChanged(holder.getAdapterPosition());
             if (listener != null) listener.onCartUpdated();
         });
@@ -65,10 +72,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
             if (newQty <= 0) {
                 // 0개면 삭제
-                cartList.remove(holder.getAdapterPosition());
-                notifyItemRemoved(holder.getAdapterPosition());
+                int pos = holder.getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    CartManager.getInstance().removeItem(product);
+                    cartList.remove(pos);
+                    notifyItemRemoved(pos);
+                }
             } else {
                 item.setQuantity(newQty);
+                CartManager.getInstance().updateQuantity(product, newQty);
                 notifyItemChanged(holder.getAdapterPosition());
             }
             if (listener != null) listener.onCartUpdated();
@@ -79,6 +91,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.btnDelete.setOnClickListener(v -> {
             int pos = holder.getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
+                CartManager.getInstance().removeItem(product);
                 cartList.remove(pos);
                 notifyItemRemoved(pos);
             }
@@ -104,7 +117,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivProduct, btnPlus, btnMinus, btnDelete;
-        TextView tvName, tvPrice, tvQuantity;
+        TextView tvName, tvPrice, tvQuantity, tvScannedRibbon;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -112,9 +125,54 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             tvName = itemView.findViewById(R.id.tvName);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             tvQuantity = itemView.findViewById(R.id.tvQuantity);
+            tvScannedRibbon = itemView.findViewById(R.id.tvScannedRibbon);
             btnPlus = itemView.findViewById(R.id.btnPlus);
             btnMinus = itemView.findViewById(R.id.btnMinus);
             btnDelete = itemView.findViewById(R.id.btnDelete);
+        }
+    }
+
+    private static class DiffCallback extends DiffUtil.Callback {
+        private final List<CartItem> oldItems;
+        private final List<CartItem> newItems;
+
+        DiffCallback(List<CartItem> oldItems, List<CartItem> newItems) {
+            this.oldItems = new ArrayList<>(oldItems);
+            this.newItems = new ArrayList<>(newItems);
+        }
+
+        @Override
+        public int getOldListSize() {
+            return oldItems.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return newItems.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            Product oldProduct = oldItems.get(oldItemPosition).getProduct();
+            Product newProduct = newItems.get(newItemPosition).getProduct();
+            return oldProduct.getPId() != null && oldProduct.getPId().equals(newProduct.getPId());
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            CartItem oldItem = oldItems.get(oldItemPosition);
+            CartItem newItem = newItems.get(newItemPosition);
+            Product oldProduct = oldItem.getProduct();
+            Product newProduct = newItem.getProduct();
+            return oldItem.getQuantity() == newItem.getQuantity()
+                    && oldItem.getScannedQuantity() == newItem.getScannedQuantity()
+                    && oldProduct.getPPrice() == newProduct.getPPrice()
+                    && stringEquals(oldProduct.getPName(), newProduct.getPName())
+                    && stringEquals(oldProduct.getImageUrl(), newProduct.getImageUrl());
+        }
+
+        private boolean stringEquals(String left, String right) {
+            return left == null ? right == null : left.equals(right);
         }
     }
 }
